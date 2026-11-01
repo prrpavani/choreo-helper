@@ -14,10 +14,10 @@
    [["choreo/choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
     ["imports",
      [["Choreo.Emit transitive imports (legacy)", "4a44f38271f18643"],
-      ["Choreo.Emit:importAllArts", "cc84c0d1719c3d88"],
+      ["Choreo.Emit:importAllArts", "64b21b55417b25e0"],
       ["Choreo.Scene transitive imports (legacy)", "32e98d399fe6e160"],
       ["Choreo.Scene:importAllArts", "fb4cc92d8d63e45b"],
-      ["Choreo.Stress transitive imports (legacy)", "c0834437fb118b8e"],
+      ["Choreo.Stress transitive imports (legacy)", "d8b397f5ee4b3491"],
       ["Choreo.Stress:importAllArts", "9a17e450bd3c4def"]]]]],
   ["libs",
    [["import dynlibs", "00000000000006bb"],
@@ -33,4 +33,4 @@
   ["Module.name: Main", "f2a1fd945cf30c62"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "43a44b23d1dc2863"}
+ "depHash": "46cbe2e2b4dea13c"}

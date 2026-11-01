@@ -1,6 +1,6 @@
 # Choreo
 
-> Describe a set in words. Choreo plans it, including dancers coming on and going off, and Lean proves four things about every instant: no collisions, in bounds, under the speed limit, no jumps. Formation and musicality are no longer claimed by the app; sections below that mention them describe the Lean library only.
+> A choreography editor where routines are programs, and safety is inherited from general Lean theorems about their operations. See `docs/architecture-audit.md` for exactly what is proved, what is computed, and what is not. Sections below that mention formation or musicality describe the older Lean library only.
 
 **Create a dance. Understand its movement. Prove its choreography. Bring it to life.**
 

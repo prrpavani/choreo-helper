@@ -1,6 +1,6 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
- "outputs": "25916bf8690859e7",
+ "outputs": "a5b3701c5f449e6a",
  "log":
  [{"message":
    ".> MACOSX_DEPLOYMENT_TARGET=99.0 /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/clang -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/bin/choreo @/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/bin/choreo.rsp",
@@ -67,7 +67,7 @@
       ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Program.c.o.export",
        "c8fb2a2c0aac5fce"],
       ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Emit.c.o.export",
-       "b4170a586c5717f7"],
+       "8557e555adb4a355"],
       ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Scene.c.o.export",
        "365590a76f0441fb"],
       ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Stress.c.o.export",
@@ -79,4 +79,4 @@
    "407ce514b71d5a10"],
   ["arm64-apple-darwin24.6.0", "77c16133d139df5a"],
   ["MACOSX_DEPLOYMENT_TARGET: 99.0", "841efb403ba0ed2d"]],
- "depHash": "16336f834e027ae5"}
+ "depHash": "7412bdec933c98de"}

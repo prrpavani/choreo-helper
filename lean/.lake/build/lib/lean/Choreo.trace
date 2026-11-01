@@ -20,7 +20,7 @@
       ["Choreo.Intent transitive imports (legacy)", "f06fe8bd56a0a209"],
       ["Choreo.Intent:importAllArts", "d6fb358616901b0b"],
       ["Choreo.Emit transitive imports (legacy)", "4a44f38271f18643"],
-      ["Choreo.Emit:importAllArts", "cc84c0d1719c3d88"],
+      ["Choreo.Emit:importAllArts", "64b21b55417b25e0"],
       ["Choreo.Examples transitive imports (legacy)", "c88a5caa7108e193"],
       ["Choreo.Examples:importAllArts", "19b106f24608373a"],
       ["Choreo.Compose transitive imports (legacy)", "4c4a1baa8aa9642d"],
@@ -50,4 +50,4 @@
   ["Module.name: Choreo", "f2dfdbdaa00d298b"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "18126fda1e71b671"}
+ "depHash": "b6b20071884f61d6"}

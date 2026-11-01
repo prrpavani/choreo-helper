@@ -1,13 +1,19 @@
-# The demo
+# The demo: Parallel Lines
 
-**The story:** two formations can both be correct, and the walk between them can still crash. Choreo plans dancers coming on and going off, and Lean proves nobody runs into anybody.
+**The idea:** a creative tool whose correctness is inherited from the mathematics of its operations, rather than approximated by testing.
 
-1. Open the Studio. Type a loose idea: "A fancy bhangra piece for eight dancers, 90 seconds. Half wait off stage." Press Make it and prove it.
-2. Top view: press play. The strip along the bottom shows the four proofs live.
-3. Right panel, Crossings: open the Cast change. Press See the crash Lean rejected, and it plays in Top view, 3D and Spacetime. Press Back to the safe version.
-4. Formations: a filmstrip of every formation. Drag a dancer or a diamond on a path. It says Not checked until you press Verify.
-5. Proofs tab: Explain it has a 30-second script to read out. The four proofs names each theorem. How they fail shows the exact dancers and moment.
-6. Change it: back to the prompt page. Say "add a spiral" and it is proved again, with the old version in History.
+Open the Studio on the gallery, and open **Parallel Lines**. Eight dancers.
+
+1. **A valid formation.** Verify shows "Start: each pair checked once".
+2. **Rotate 90°.** Select it in the sequence. "Inherited from a theorem": because rotation keeps every distance, and the start was collision-free, so is this. Open "How this connects to Lean": Rotate 90° → `rotatePath` → `turning_keeps_the_gap`. No frames are checked.
+3. **Translate and Reflect.** The same inheritance. Reflect says why it is different: it can't be one rigid motion, so dancers walk across in their own lanes.
+4. **Split into Two Groups.** Dancers are on their own paths now, so a collision is possible. The panel shows the real parabola for the closest pair, and its exact lowest point. Every instant, no sampling.
+5. **Break it.** Change Split's formation to "Two Dancers Trade Places" and press Verify. Both formations are valid, and the walk collides. Verify shows Disproven: Ben and Ana, at exactly 1/2 of the way through, with the Lean theorem.
+6. **Repair it.** Change it back to "Split Apart" and press Verify. Proved again.
+
+Then show **Fracture / Reunion**: move "Line between groups" and verify. Movement is safe, and the contract fails. That is a different failure from a collision.
+
+The dancer count is a setting. The general theorems hold for any number of dancers; at 12 and 16 in this routine, Reflect's lane requirement fails, and Lean says so.
 
 ## Starting clean
 

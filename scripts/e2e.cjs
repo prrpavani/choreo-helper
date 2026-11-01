@@ -149,8 +149,8 @@ const paneOf = (p, name) => p.click(`.rail-tabs button:has-text("${name}")`)
 
   heading('All four properties are on screen')
   for (const [key, name] of [['gap', 'No collisions'], ['bounds', 'Stays in bounds'], ['speed', 'Under the speed limit'], ['joins', 'No jumps between moves']]) ok(/Proved/.test(await p.textContent(`[data-gauge=${key}]`)) && (await p.textContent(`[data-gauge=${key}]`)).includes(name), `${name} is shown as proved`)
-  await p.click('.modes button:has-text("Create")'); await p.click('.tab:has-text("3D")'); await p.waitForTimeout(300); ok(await p.locator('.gauge').count() === 5, 'and Forgiving, in the 3D view too')
-  ok(/Proved/.test(await p.textContent('[data-gauge=forgive]')), 'the forgiving theorem is proved'); await p.click('[data-gauge=speed] .g-deep'); await p.waitForTimeout(250); ok(!(await p.textContent('.time')).startsWith('0:00'), 'clicking a figure jumps to that moment')
+  await p.click('.modes button:has-text("Create")'); await p.click('.tab:has-text("3D")'); await p.waitForTimeout(300); ok(await p.locator('.gauge').count() === 4, 'in the 3D view too')
+  await p.click('[data-gauge=speed] .g-deep'); await p.waitForTimeout(250); ok(!(await p.textContent('.time')).startsWith('0:00'), 'clicking a figure jumps to that moment')
   await p.click('.tab:has-text("Top view")')
 
   heading('A routine from a prompt can be edited')

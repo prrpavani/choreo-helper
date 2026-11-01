@@ -284,7 +284,7 @@ def proofSource (b : Built) (program : List CStep := []) (start : State := []) :
   -- the movement guarantee for the routine as a whole: everybody moves safely, at every instant
   if b.structural then
     out := out ++ "/-- The main result: this routine is safe at every instant, because its program's movements are. No phase is checked on its own. -/\n"
-    out := out ++ s!"theorem routine_moves_safely {fieldBinders} : MovementProved K routine asks :=\n  movement_of_specs K (by decide +kernel) (specs_of_run (Prog.run_of_allRun (K := K) (c := cfg) (p := program) (t := 0) (s := st0) (by decide +kernel)) (by decide +kernel)) (by decide +kernel)\n#eval IO.println \"PART movement\"\n#eval IO.println \"STRUCTURAL\"\n\n"
+    out := out ++ s!"theorem routine_moves_safely {fieldBinders} : MovementProved K routine asks :=\n  movement_of_specs K (by decide +kernel) (specs_of_run (Prog.run_of_allRun (K := K) (c := cfg) (p := program) (t := 0) (s := st0) (by decide +kernel)) (by decide +kernel)) (by decide +kernel)\n#eval IO.println \"PART movement\"\n#eval IO.println \"STRUCTURAL\"\n\n#print axioms routine_moves_safely\n#eval IO.println \"VERIFIED\"\n"
   else if b.movementOk then
     out := out ++ "/-- The main result: in this exact routine, nobody comes too close, leaves the stage or moves too fast, at any instant. -/\n"
     out := out ++ s!"theorem routine_moves_safely {fieldBinders} : MovementProved K routine asks :=\n  movement_part (r := routine) (by decide +kernel) {chainOf (List.range r.phases.length)} (by decide +kernel) K\n#eval IO.println \"PART movement\"\n\n"
