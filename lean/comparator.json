@@ -1,0 +1,6 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": ["Final.composition", "Final.step_contract", "Final.drift_keeps_gap", "Final.checker_is_sound", "Final.demo_routine_verified", "Final.naive_flip_is_unsafe", "Final.passing_through_a_gap_is_safe", "Final.swapping_along_a_line_always_collides", "Final.parts_compose", "Final.transition_valid"],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}

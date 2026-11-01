@@ -1,0 +1,25 @@
+{"plugins": [],
+ "package": "choreo",
+ "options": {},
+ "name": "Choreo.Demo",
+ "isModule": false,
+ "importArts":
+ {"Choreo.Sound":
+  [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Sound.olean"]],
+  "Choreo.Routine":
+  [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Routine.olean"]],
+  "Choreo.Refute":
+  [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Refute.olean"]],
+  "Choreo.QuickRefute":
+  [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/QuickRefute.olean"]],
+  "Choreo.Poly":
+  [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Poly.olean"]],
+  "Choreo.Model":
+  [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Model.olean"]],
+  "Choreo.Intent":
+  [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Intent.olean"]],
+  "Choreo.Compose":
+  [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Compose.olean"]],
+  "Choreo.Check":
+  [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Check.olean"]]},
+ "dynlibs": []}

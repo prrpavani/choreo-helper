@@ -1,0 +1,15 @@
+name = "choreo"
+defaultTargets = ["Choreo", "choreo"]
+
+[[lean_lib]]
+name = "Choreo"
+
+[[lean_lib]]
+name = "Challenge"
+
+[[lean_lib]]
+name = "Solution"
+
+[[lean_exe]]
+name = "choreo"
+root = "Main"

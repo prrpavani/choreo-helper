@@ -1,0 +1,32 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["48cf512451423c4d.olean"],
+  "m": false,
+  "i": "c45fb30f9077696a.ilean",
+  "c": "06ca706cca5931db.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/lean/Choreo/LanguageExamples.lean -o /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/LanguageExamples.olean -i /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/LanguageExamples.ilean -c /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/LanguageExamples.c --setup /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/LanguageExamples.setup.json --json",
+   "level": "trace"}],
+ "inputs":
+ [["deps",
+   [["choreo/Choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
+    ["imports",
+     [["Choreo.Language transitive imports (legacy)", "4656059468d61b28"],
+      ["Choreo.Language:importAllArts", "158748cda1ef3857"]]]]],
+  ["libs",
+   [["import dynlibs", "00000000000006bb"],
+    ["package external libraries", "00000000000006bb"],
+    ["module dynlibs", "00000000000006bb"],
+    ["module plugins", "00000000000006bb"]]],
+  ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
+   "407ce514b71d5a10"],
+  ["/Users/rrpavani/Documents/choreo-master/lean/Choreo/LanguageExamples.lean",
+   "5ffe2f718035cf05"],
+  ["options", "00000000000006bb"],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: Choreo.LanguageExamples", "06b18596a4c38a28"],
+  ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "ecae72b6432f833f"}

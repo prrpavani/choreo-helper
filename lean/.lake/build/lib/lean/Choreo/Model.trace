@@ -1,0 +1,32 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["288a6e2a76a05927.olean"],
+  "m": false,
+  "i": "e4c348e17fffbfa3.ilean",
+  "c": "e416518af78dc283.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/lean/Choreo/Model.lean -o /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Model.olean -i /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Model.ilean -c /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Model.c --setup /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Model.setup.json --json",
+   "level": "trace"}],
+ "inputs":
+ [["deps",
+   [["choreo/Choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
+    ["imports",
+     [["Choreo.Poly transitive imports (legacy)", "00000000000006bb"],
+      ["Choreo.Poly:importAllArts", "55f3771bfadf38b7"]]]]],
+  ["libs",
+   [["import dynlibs", "00000000000006bb"],
+    ["package external libraries", "00000000000006bb"],
+    ["module dynlibs", "00000000000006bb"],
+    ["module plugins", "00000000000006bb"]]],
+  ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
+   "407ce514b71d5a10"],
+  ["/Users/rrpavani/Documents/choreo-master/lean/Choreo/Model.lean",
+   "3e54e2ada12001f7"],
+  ["options", "00000000000006bb"],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: Choreo.Model", "bb2e6cb708134f20"],
+  ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "1fcca08af35a0b64"}

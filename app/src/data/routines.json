@@ -1,0 +1,712 @@
+[
+ {
+  "id": "midnight-in-motion",
+  "title": "Midnight in Motion",
+  "style": "Bollywood fusion",
+  "difficulty": "Intermediate",
+  "blurb": "Eight dancers. Three formations. One continuous performance. A V, a crossing into two diagonals, and a diamond that lands on the last accent.",
+  "prompt": "Midnight in Motion. Bollywood fusion, step-touch.",
+  "dots": [
+   [
+    -4,
+    1.4
+   ],
+   [
+    4,
+    1.4
+   ],
+   [
+    -3,
+    0.7
+   ],
+   [
+    3,
+    0.7
+   ],
+   [
+    -2,
+    0
+   ],
+   [
+    2,
+    0
+   ],
+   [
+    -1,
+    -0.7
+   ],
+   [
+    1,
+    -0.7
+   ]
+  ],
+  "gap": 900,
+  "scene": {
+   "frames": [
+    [
+     [
+      -4800,
+      5500
+     ],
+     [
+      4800,
+      5500
+     ],
+     [
+      -3600,
+      4000
+     ],
+     [
+      3600,
+      4000
+     ],
+     [
+      -2400,
+      2500
+     ],
+     [
+      2400,
+      2500
+     ],
+     [
+      -1200,
+      1000
+     ],
+     [
+      1200,
+      1000
+     ]
+    ],
+    [
+     [
+      -1200,
+      4000
+     ],
+     [
+      -2400,
+      5500
+     ],
+     [
+      0,
+      2500
+     ],
+     [
+      -3600,
+      7000
+     ],
+     [
+      1200,
+      4000
+     ],
+     [
+      0,
+      5500
+     ],
+     [
+      2400,
+      2500
+     ],
+     [
+      3600,
+      1000
+     ]
+    ],
+    [
+     [
+      1200,
+      5500
+     ],
+     [
+      0,
+      7000
+     ],
+     [
+      -2400,
+      4000
+     ],
+     [
+      -1200,
+      5500
+     ],
+     [
+      -1200,
+      2500
+     ],
+     [
+      2400,
+      4000
+     ],
+     [
+      0,
+      1000
+     ],
+     [
+      1200,
+      2500
+     ]
+    ]
+   ],
+   "rules": [
+    {
+     "name": "Left-right symmetry",
+     "kind": "mirror",
+     "frame": 0,
+     "members": [],
+     "dx": 0,
+     "dy": 0,
+     "pairs": [
+      [
+       0,
+       1
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       4,
+       5
+      ],
+      [
+       6,
+       7
+      ]
+     ],
+     "mirror": 0
+    },
+    {
+     "name": "The upstage diagonal",
+     "kind": "line",
+     "frame": 1,
+     "members": [
+      3,
+      1,
+      0,
+      2
+     ],
+     "dx": 1200,
+     "dy": -1500,
+     "pairs": [],
+     "mirror": 0
+    },
+    {
+     "name": "Left-right symmetry",
+     "kind": "mirror",
+     "frame": 2,
+     "members": [],
+     "dx": 0,
+     "dy": 0,
+     "pairs": [
+      [
+       0,
+       3
+      ],
+      [
+       2,
+       5
+      ],
+      [
+       4,
+       7
+      ]
+     ],
+     "mirror": 0
+    }
+   ],
+   "holds": [
+    8,
+    0,
+    4
+   ],
+   "moves": [
+    8,
+    4
+   ],
+   "seconds": 15
+  },
+  "sections": [
+   {
+    "name": "The Opening",
+    "line": "The V holds, with step-touches on the count."
+   },
+   {
+    "name": "The Crossing",
+    "line": "Everyone crosses into two diagonals. This is where the paths meet."
+   },
+   {
+    "name": "The Finale",
+    "line": "The lines open into a diamond and land together."
+   }
+  ]
+ },
+ {
+  "id": "filmi-flip",
+  "title": "Filmi Flip",
+  "style": "Bollywood fusion",
+  "difficulty": "Beginner",
+  "blurb": "Two lines cross the stage, trade places through the gaps, and leave in new lines. The move every fusion set needs, and the one most likely to go wrong.",
+  "prompt": "One minute of bollywood fusion. Four dancers from stage left and four from stage right form a grid of four by two, then flip lines, then leave in new lines.",
+  "dots": [
+   [
+    -3,
+    1
+   ],
+   [
+    -1,
+    1
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    3,
+    1
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    3,
+    -1
+   ]
+  ]
+ },
+ {
+  "id": "dhol-drop",
+  "title": "Dhol Drop",
+  "style": "Bhangra",
+  "difficulty": "Intermediate",
+  "blurb": "A wedge drives downstage on the dhol, then snaps into rows. Big dhamaal energy with every landing proved on the beat.",
+  "prompt": "One minute of bhangra. Four dancers from stage left and four from stage right form a V, then a grid of four by two, then leave.",
+  "dots": [
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    -2,
+    0
+   ],
+   [
+    2,
+    0
+   ],
+   [
+    -3,
+    1
+   ],
+   [
+    3,
+    1
+   ],
+   [
+    -4,
+    2
+   ]
+  ]
+ },
+ {
+  "id": "kuthu-mass",
+  "title": "Kuthu Mass",
+  "style": "Kuthu",
+  "difficulty": "Intermediate",
+  "blurb": "The parai hits and the floor belongs to everybody. A wedge, a hard block, and mass walks straight at the audience, with every stomp proved to land on the count.",
+  "prompt": "One minute of kuthu. Four dancers from stage left and four from stage right form a V, then a grid of four by two, then leave. Kuthu step and mass walk.",
+  "dots": [
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    -2,
+    0
+   ],
+   [
+    2,
+    0
+   ],
+   [
+    -3,
+    1
+   ],
+   [
+    3,
+    1
+   ],
+   [
+    -4,
+    2
+   ]
+  ]
+ },
+ {
+  "id": "adavu-fusion",
+  "title": "Adavu Fusion",
+  "style": "South Indian fusion",
+  "difficulty": "Advanced",
+  "blurb": "Bharatanatyam's clean lines meet the circuit. Tatta and natta adavus in exact rows, trading places through the gaps with geometry as sharp as the footwork.",
+  "prompt": "One minute of bharatanatyam fusion. Four dancers from stage left and four from stage right form a grid of four by two, then flip lines, then leave. Tatta adavu and natta adavu.",
+  "dots": [
+   [
+    -3,
+    1
+   ],
+   [
+    -1,
+    1
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    3,
+    1
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    3,
+    -1
+   ]
+  ]
+ },
+ {
+  "id": "kolattam-ring",
+  "title": "Kolattam Ring",
+  "style": "South Indian fusion",
+  "difficulty": "Intermediate",
+  "blurb": "Stick dance and clapping circles from across South India, opened up for the stage. The ring stays perfectly round while it turns.",
+  "prompt": "One minute of kolattam. Four dancers from stage left and four from stage right form a circle, rotate it 90 degrees, then leave. Kolattam and kummi.",
+  "dots": [
+   [
+    0,
+    3
+   ],
+   [
+    2.1,
+    2.1
+   ],
+   [
+    3,
+    0
+   ],
+   [
+    2.1,
+    -2.1
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    -2.1,
+    -2.1
+   ],
+   [
+    -3,
+    0
+   ],
+   [
+    -2.1,
+    2.1
+   ]
+  ]
+ },
+ {
+  "id": "raas-ring",
+  "title": "Raas Ring",
+  "style": "Raas",
+  "difficulty": "Intermediate",
+  "blurb": "The circle at the heart of raas: it turns half way round, opens into a diagonal, and clears the floor. Every dancer stays exactly on the ring while it turns.",
+  "prompt": "One minute of raas. Four dancers from stage left and four from stage right form a circle, rotate it 180 degrees, form a diagonal, then leave.",
+  "dots": [
+   [
+    0,
+    3
+   ],
+   [
+    2.1,
+    2.1
+   ],
+   [
+    3,
+    0
+   ],
+   [
+    2.1,
+    -2.1
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    -2.1,
+    -2.1
+   ],
+   [
+    -3,
+    0
+   ],
+   [
+    -2.1,
+    2.1
+   ]
+  ]
+ },
+ {
+  "id": "windows-mashup",
+  "title": "Windows Mashup",
+  "style": "Bollywood fusion",
+  "difficulty": "Advanced",
+  "blurb": "Staggered rows so that every face reads from the front, then a ring, then new lines. A full mashup set in ninety seconds.",
+  "prompt": "Ninety seconds of bollywood fusion mashup. Four dancers from stage left and four from stage right form windows, then a circle, then leave in new lines.",
+  "dots": [
+   [
+    -3,
+    1
+   ],
+   [
+    -1,
+    1
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    3,
+    1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    2,
+    -1
+   ],
+   [
+    4,
+    -1
+   ]
+  ]
+ },
+ {
+  "id": "enter-stage-left",
+  "title": "Enter, Stage Left",
+  "style": "Bollywood fusion",
+  "difficulty": "Beginner",
+  "blurb": "Four on stage, four in the wings. Lean proves the dancers coming on can never clash with the ones already there. Set out on a grid you can edit.",
+  "prompt": "Four dancers onstage in row B. Two dancers from stage left and two from stage right come in to row D. Bollywood fusion, thumka and step-touch.",
+  "dots": [
+   [
+    -3,
+    1
+   ],
+   [
+    -1,
+    1
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    3,
+    1
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    3,
+    -1
+   ]
+  ]
+ },
+ {
+  "id": "full-squad",
+  "title": "Full Squad",
+  "style": "Bhangra",
+  "difficulty": "Advanced",
+  "blurb": "Sixteen dancers, eight from each side, build a four by four block along their own rows. A full team on the floor without one near miss.",
+  "prompt": "One minute of bhangra. Eight dancers from stage left and eight from stage right form a grid of four by four, then leave.",
+  "dots": [
+   [
+    -3,
+    3
+   ],
+   [
+    -1,
+    3
+   ],
+   [
+    1,
+    3
+   ],
+   [
+    3,
+    3
+   ],
+   [
+    -3,
+    1
+   ],
+   [
+    -1,
+    1
+   ],
+   [
+    1,
+    1
+   ],
+   [
+    3,
+    1
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    3,
+    -1
+   ],
+   [
+    -3,
+    -3
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    3,
+    -3
+   ]
+  ]
+ },
+ {
+  "id": "first-rehearsal",
+  "title": "First Rehearsal",
+  "style": "Contemporary fusion",
+  "difficulty": "Beginner",
+  "blurb": "Four dancers, one line, and plenty of room. Start here to learn how counts, sections and proofs fit together.",
+  "prompt": "One minute, chill. Two dancers from stage left and two from stage right form a single line, then leave. Step-touch and box step.",
+  "dots": [
+   [
+    -3,
+    0
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    1,
+    0
+   ],
+   [
+    3,
+    0
+   ]
+  ]
+ },
+ {
+  "id": "cypher-diamond",
+  "title": "Cypher Diamond",
+  "style": "Hip-hop",
+  "difficulty": "Intermediate",
+  "blurb": "Six dancers hit a hard-edged diamond on a boom-bap groove, then reset to a line.",
+  "prompt": "One minute of hip hop. Three dancers from stage left and three from stage right form a diamond, then a single line, then leave. Box step and chasse.",
+  "dots": [
+   [
+    0,
+    2
+   ],
+   [
+    2,
+    0
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -2,
+    0
+   ],
+   [
+    3.5,
+    0
+   ],
+   [
+    0,
+    3.4
+   ]
+  ]
+ }
+]

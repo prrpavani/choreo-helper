@@ -1,0 +1,98 @@
+[
+ {
+  "id": "kolattam-rings",
+  "title": "Kolattam double ring",
+  "tradition": "South Indian",
+  "line": "A circle that splits in two. The rings turn against each other, then neighbours weave.",
+  "prompt": "One minute of kolattam. Four dancers from stage left and four from stage right form two concentric circles, then counter rotate 90 degrees, then weave, then ripple, then leave. Kolattam and kummi.",
+  "source": "https://en.wikipedia.org/wiki/Kolattam"
+ },
+ {
+  "id": "kummi-circle",
+  "title": "Kummi ring",
+  "tradition": "South Indian",
+  "line": "Dancers in a ring keeping time with claps, with neighbours trading places.",
+  "prompt": "One minute of kummi. Four dancers from stage left and four from stage right form a circle, then weave, then ripple, then leave. Kummi.",
+  "source": "https://en.wikipedia.org/wiki/Kummi"
+ },
+ {
+  "id": "adavu-lines",
+  "title": "Adavu lines",
+  "tradition": "South Indian",
+  "line": "Base units of Bharatanatyam in exact rows that trade places and ripple.",
+  "prompt": "One minute of bharatanatyam fusion. Four dancers from stage left and four from stage right form a grid of four by two, then flip lines, then a diagonal, then ripple, then leave. Tatta adavu, natta adavu and kuditta mettu.",
+  "source": "https://narthaki.com/info/articles/art382.html"
+ },
+ {
+  "id": "kuthu-wedge",
+  "title": "Kuthu wedge",
+  "tradition": "Kuthu",
+  "line": "A wedge that gathers and bursts into a block, with stomps and mass walks.",
+  "prompt": "One minute of kuthu. Four dancers from stage left and four from stage right form a V, then burst, then a grid of four by two, then leave. Kuthu step, dappan step and mass walk.",
+  "source": ""
+ },
+ {
+  "id": "raas-ring-turn",
+  "title": "Raas circle, turning",
+  "tradition": "Raas",
+  "line": "The traditional circle, weaving and turning half way round.",
+  "prompt": "One minute of raas. Four dancers from stage left and four from stage right form a circle, then weave, then rotate it 180 degrees, then leave. Be taali, tran taali and dodhiyu.",
+  "source": "https://en.wikipedia.org/wiki/Dandiya_Raas"
+ },
+ {
+  "id": "collegiate-raas",
+  "title": "Collegiate raas stage",
+  "tradition": "Raas",
+  "line": "The competition form uses the whole stage: windows, a zipper, then a ring.",
+  "prompt": "Ninety seconds of raas. Four dancers from stage left and four from stage right form windows, then zipper, then a circle, then weave, then a diamond, then leave. Be taali, tran taali and dodhiyu.",
+  "source": "https://en.wikipedia.org/wiki/Dandiya_Raas"
+ },
+ {
+  "id": "bhangra-rotation",
+  "title": "Bhangra line rotation",
+  "tradition": "Bhangra",
+  "line": "Competition rubrics score clean formations and dancer rotation, so lines trade, cross and burst.",
+  "prompt": "One minute of bhangra. Four dancers from stage left and four from stage right form a grid of four by two, then flip lines, then zipper, then burst, then leave in new lines. Dhamaal and chaal.",
+  "source": "https://en.wikipedia.org/wiki/Bhangra_(dance)"
+ },
+ {
+  "id": "jhummar-sway",
+  "title": "Jhummar circle",
+  "tradition": "Bhangra",
+  "line": "A slower swaying circle that ripples, then winds across the stage.",
+  "prompt": "One minute of bhangra. Four dancers from stage left and four from stage right form a circle, then ripple, then snake, then leave. Jhummar and luddi.",
+  "source": "https://en.wikipedia.org/wiki/Folk_dances_of_Punjab"
+ },
+ {
+  "id": "square-set",
+  "title": "Square set",
+  "tradition": "Square dance",
+  "line": "Eight dancers round a square, the set square dance standardised, with a right-and-left weave.",
+  "prompt": "One minute. Four dancers from stage left and four from stage right form a square, then weave, then rotate it 90 degrees, then leave. Box step and grapevine.",
+  "source": "https://teaching.callerlab.org/mainstream/right-and-left-grand-definition/"
+ },
+ {
+  "id": "contra-lines",
+  "title": "Contra long lines",
+  "tradition": "Contra",
+  "line": "Two long lines, the base shape of contra dance, passing through each other.",
+  "prompt": "One minute. Four dancers from stage left and four from stage right form a grid of four by two, then flip lines, then zipper, then leave. Balance step and step touch.",
+  "source": "https://en.wikipedia.org/wiki/Contra_dance_form"
+ },
+ {
+  "id": "windows-diamond",
+  "title": "Windows to diamond",
+  "tradition": "Stage shapes",
+  "line": "Staggered rows so every face reads, opening into a diamond and a burst.",
+  "prompt": "One minute of bollywood fusion. Four dancers from stage left and four from stage right form windows, then a diamond, then burst, then leave. Thumka, jhatka and hook step.",
+  "source": ""
+ },
+ {
+  "id": "v-diagonal",
+  "title": "V to diagonal",
+  "tradition": "Stage shapes",
+  "line": "A V for impact, a diagonal for depth, then the whole group snakes across the stage.",
+  "prompt": "One minute of bollywood fusion. Four dancers from stage left and four from stage right form a V, then a diagonal line, then snake, then leave. Grapevine and shimmy.",
+  "source": ""
+ }
+]

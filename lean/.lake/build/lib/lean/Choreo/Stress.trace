@@ -1,0 +1,38 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["7b88b559b13ddde3.olean"],
+  "m": false,
+  "i": "59642033d1a1d776.ilean",
+  "c": "ce5e5edae12c4c5d.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/lean/Choreo/Stress.lean -o /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Stress.olean -i /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Stress.ilean -c /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Stress.c --setup /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Stress.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "Choreo/Stress.lean:55:6: Variable name `n` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _n\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "Choreo/Stress.lean:60:6: Variable name `lastIx` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _lastIx\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"}],
+ "inputs":
+ [["deps",
+   [["choreo/Choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
+    ["imports",
+     [["Choreo.Emit transitive imports (legacy)", "d71f697feb17320d"],
+      ["Choreo.Emit:importAllArts", "91c752bb1d694df4"]]]]],
+  ["libs",
+   [["import dynlibs", "00000000000006bb"],
+    ["package external libraries", "00000000000006bb"],
+    ["module dynlibs", "00000000000006bb"],
+    ["module plugins", "00000000000006bb"]]],
+  ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
+   "407ce514b71d5a10"],
+  ["/Users/rrpavani/Documents/choreo-master/lean/Choreo/Stress.lean",
+   "69af5362c295856f"],
+  ["options", "00000000000006bb"],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: Choreo.Stress", "953e5e4f6e2630e9"],
+  ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "a9aab45167223cee"}

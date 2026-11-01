@@ -1,0 +1,32 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["8cc816d25c4c21ce.olean"],
+  "m": false,
+  "i": "8247ab505e9da72d.ilean",
+  "c": "74adbfea0316e3eb.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/lean/Choreo/Calculus.lean -o /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Calculus.olean -i /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Calculus.ilean -c /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Calculus.c --setup /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Calculus.setup.json --json",
+   "level": "trace"}],
+ "inputs":
+ [["deps",
+   [["choreo/Choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
+    ["imports",
+     [["Choreo.Routine transitive imports (legacy)", "7c17f958b27f6ece"],
+      ["Choreo.Routine:importAllArts", "95ec2b336194f1ba"]]]]],
+  ["libs",
+   [["import dynlibs", "00000000000006bb"],
+    ["package external libraries", "00000000000006bb"],
+    ["module dynlibs", "00000000000006bb"],
+    ["module plugins", "00000000000006bb"]]],
+  ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
+   "407ce514b71d5a10"],
+  ["/Users/rrpavani/Documents/choreo-master/lean/Choreo/Calculus.lean",
+   "40d707ac6d7060aa"],
+  ["options", "00000000000006bb"],
+  ["isModule: false", "feefd2a0d3a1847e"],
+  ["Module.name: Choreo.Calculus", "c336cfdc4fc2c6bc"],
+  ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "3aa716493063d9f4"}
