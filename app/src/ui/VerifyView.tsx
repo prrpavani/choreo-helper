@@ -9,7 +9,7 @@ interface Obligation { id: string; name: string; text: string; status: Status; t
 /** A real declaration from the Lean files. If it isn't there, that is what it says. */
 export function Declaration({ name, proofId }: { name: string; proofId: string }) {
   const [d, setD] = useState<{ file: string; line: number; text: string } | null | 'none'>(null)
-  useEffect(() => { let live = true; fetch(`/api/theorem/${encodeURIComponent(name)}?proof=${proofId}`).then(r => r.ok ? r.json() : 'none').then(x => { if (live) setD(x) }).catch(() => { if (live) setD('none') }); return () => { live = false } }, [name, proofId])
+  useEffect(() => { let live = true; fetch(`/api/theorem/${encodeURIComponent(name)}?proof=${proofId}`).then(r => r.json()).then(x => { if (live) setD(x ?? 'none') }).catch(() => { if (live) setD('none') }); return () => { live = false } }, [name, proofId])
   if (d === null) return <p className="lp-not">Looking it up…</p>
   if (d === 'none') return <p className="lp-not">No declaration named <code>{name}</code> exists for this version.</p>
   return <><pre className="lp-pre">{d.text}</pre><p className="lp-not">{d.file}, line {d.line}</p></>

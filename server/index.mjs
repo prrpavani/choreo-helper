@@ -194,7 +194,7 @@ const server = http.createServer((req, res) => {
   }
   if (url.pathname.startsWith('/api/theorem/')) {
     const found = findTheorem(decodeURIComponent(url.pathname.slice(13)), url.searchParams.get('proof'))
-    res.writeHead(found ? 200 : 404, { 'Content-Type': 'application/json' })
+    res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify(found))
   }
   if (url.pathname.startsWith('/api/proof/')) {

@@ -32,14 +32,14 @@ export function OpInspector({ program, report, kernel, at, onChange, onSelect, g
     <input className="op-title" value={op.title ?? ''} aria-label="Movement name" onChange={e => set({ title: e.target.value }, `Renamed to ${e.target.value}`)} />
     <div className="op-status"><Dot s={status} />{STATUS_WORD[status]}</div>
     <div className="op-fields">
-      {op.kind === 'move' && <label className="param"><span>Formation</span><select aria-label="Formation" value={op.shape} onChange={e => set({ shape: e.target.value, title: `Move to ${SHAPE_NAME[e.target.value] ?? e.target.value}`, places: undefined }, `Changed to ${SHAPE_NAME[e.target.value] ?? e.target.value}`)}>{SHAPES.map(x => <option key={x} value={x}>{SHAPE_NAME[x]}</option>)}</select></label>}
+      {op.kind === 'move' && <label className="param"><span>Formation</span><select aria-label="Formation" value={op.shape} onChange={e => set({ shape: e.target.value, title: e.target.value === 'trade' ? 'Two Dancers Trade Places' : `Move to ${SHAPE_NAME[e.target.value] ?? e.target.value}`, places: undefined }, `Changed to ${SHAPE_NAME[e.target.value] ?? e.target.value}`)}>{SHAPES.map(x => <option key={x} value={x}>{SHAPE_NAME[x]}</option>)}</select></label>}
       {op.kind === 'rotate' && <label className="param"><span>Turn</span><select value={op.quarters ?? 1} onChange={e => set({ quarters: Number(e.target.value), title: `Rotate ${Number(e.target.value) * 90}°` }, `Rotate ${Number(e.target.value) * 90}°`)}>{[1, 2, 3].map(q => <option key={q} value={q}>{q * 90}°</option>)}</select></label>}
       {op.kind === 'step' && <label className="param"><span>Step</span><select value={op.step} onChange={e => set({ step: e.target.value, title: STEP_CHOICES.find(x => x[0] === e.target.value)?.[1] }, 'Changed the step')}>{STEP_CHOICES.map(([k, t]) => <option key={k} value={k}>{t}</option>)}</select></label>}
       {op.kind === 'parallel' && <label className="param"><span>Line between groups</span><select aria-label="Line between groups" value={op.line ?? 0} onChange={e => set({ line: Number(e.target.value) }, `Moved the line to ${Number(e.target.value) / 10} cm`)}>{[-1500, -300, 0, 1500].map(q => <option key={q} value={q}>{q / 10} cm from centre</option>)}</select></label>}
       {op.kind !== 'step' && <label className="param"><span>Counts</span><select value={op.counts ?? 8} onChange={e => set({ counts: Number(e.target.value) }, `${Number(e.target.value)} counts`)}>{COUNTS.map(c => <option key={c}>{c}</option>)}</select></label>}
     </div>
-    {first && bridge && <div className={`how how-${bridge.how}`}><b>{HOW_WORD[bridge.how]}</b><p>{bridge.because}</p><p className="how-helps">{bridge.helps}</p></div>}
     {first?.closest && <Parabola c={first.closest} limit={gap} />}
+    {first && bridge && <div className={`how how-${bridge.how}`}><b>{HOW_WORD[bridge.how]}</b><p>{bridge.because}</p><p className="how-helps">{bridge.helps}</p></div>}
     {first && <div className="contract">
       <div className={`c-row ${link}`}><div className="c-h"><Dot s={link} />Needs</div><p>{first.requires}</p>{link === 'broken' && <p className="c-why"><b>Not met.</b> {first.why}.</p>}</div>
       <div className={`c-row ${stepStatus(kernel, last)}`}><div className="c-h"><Dot s={stepStatus(kernel, last)} />Gives you</div><p>{last.ensures}</p></div>
