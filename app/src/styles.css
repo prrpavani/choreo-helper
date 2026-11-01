@@ -1064,3 +1064,19 @@ button.g-deep:hover { color: var(--ink); }
 .para-lim { stroke: #FF6B5E; stroke-width: 1; stroke-dasharray: 3 4; }
 .para-low { fill: var(--sage); }
 .para-low.bad { fill: #FF6B5E; }
+
+.g-m { font-style: normal; font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); align-self: center; }
+.vf-chain small { display: block; font-size: 10.5px; color: var(--muted); }
+.vf-chain .chain-proved em, .vf-start em { color: var(--sage); }
+.vf-chain .chain-refuted { border-color: #FF6B5E; }
+.vf-chain .chain-refuted em { color: #FF6B5E; }
+.vf-chain .chain-broken { border-color: #F2C14E; }
+.vf-chain .chain-broken em { color: #F2C14E; }
+.vf-chain .chain-unknown em, .vf-chain .chain-pending em, .vf-chain .chain-error em, .vf-chain .chain-running em { color: var(--muted); }
+.how h5 { margin: 6px 0 1px; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.how code { overflow-wrap: anywhere; font-size: 12px; }
+.op-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 8px; }
+.op-table th { text-align: left; font-weight: 500; padding: 4px 6px 4px 0; border-top: 1px solid var(--line); }
+.op-table th small { display: block; color: var(--faint); font-size: 10.5px; font-weight: 400; }
+.op-table td { padding: 4px 0; border-top: 1px solid var(--line); white-space: nowrap; text-align: right; }
+.op-table td .dot { margin-right: 5px; }

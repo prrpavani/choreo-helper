@@ -88,12 +88,12 @@ for (const t of ['60 seconds of raas.', '60 seconds of bhangra.', '60 seconds of
   if (new Set(r.phases.map(p => p.kind)).size < 4) fail(`${t}: too little happens`)
 }
 console.log('The forgiving theorem')
-{ const req = path.join(tmp, 'r.json'), proof = path.join(tmp, 'F.lean'); fs.writeFileSync(req, JSON.stringify({ prompt: castPrompt, gap: 900, drift: 150 }))
+{ const req = path.join(tmp, 'r.json'), proof = path.join(tmp, 'F.lean'); fs.writeFileSync(req, JSON.stringify({ prompt: 'A showstopper for twelve dancers, one minute, kuthu', gap: 800, drift: 100 }))
   const rep = JSON.parse(execFileSync(exe, ['compose', req, proof], { cwd: lean, env, encoding: 'utf8', maxBuffer: 1 << 28 }))
   const out = spawnSync('lean', [proof], { cwd: lean, env, encoding: 'utf8' }).stdout
   if (!/PART forgiving/.test(out) || !/VERIFIED/.test(out) || /sorryAx/.test(out)) fail('the forgiving theorem was not proved')
-  if (!fs.readFileSync(proof, 'utf8').includes('Routine.Forgiving K routine (600) (150)')) fail('it should say 60 cm with 15 cm of drift')
-  ok(`Anyone 15 cm off, still 60 cm apart: proved (${rep.phases.length} phases)`) }
+  if (!fs.readFileSync(proof, 'utf8').includes('Routine.Forgiving K routine (600) (100)')) fail('it should say 60 cm with 10 cm of drift')
+  ok(`Anyone 10 cm off, still 60 cm apart: proved (${rep.phases.length} phases)`) }
 console.log('Editing a routine from a prompt keeps its transitions')
 const fancy = check('A prompt routine, moved by hand', { prompt: castPrompt, scene: cast.derived }, 'proved')
 if (!fancy.phases.some(p => p.kind !== 'hold')) fail('moves were lost')
@@ -115,6 +115,10 @@ for (const t of ['mirror', 'half', 'upstage', 'reverse']) { const { out } = runP
 for (const k of [4, 6, 10, 12, 16]) { const { rep, out } = runProgram(`Parallel Lines, ${k} dancers`, { ...programs[0], n: k }); if (rep.config.n !== k || !/LIBRARY/.test(out)) fail('dancer count was not used'); ok(`Parallel Lines, ${k} dancers: ${/COMPOSED/.test(out) ? 'composes' : 'a contract fails, and Lean says which'}`) }
 { const x = structuredClone(programs[0]); x.sections[2].ops[0].shape = 'trade'; const { rep, out } = runProgram('trade places', x)
   const s = rep.program.steps.find(q => q.closest); if (!/WITNESS/.test(out) || !/REFUTED/.test(out) || !s.closest.clash || s.closest.uNum !== 1 || s.closest.uDen !== 2) fail('trading places should be a proved collision at the midpoint'); ok('Two dancers trade places: disproven, with the exact witness at 1/2') }
+for (const t of ['mirror', 'half', 'upstage']) { const { rep, out } = runProgram(`Parallel Lines ${t}`, programs[0], t)
+  if (JSON.stringify(rep.derived.frames[0]) !== JSON.stringify(rep.program.steps[0].before)) fail(`${t}: the first formation shown is not where the routine starts`)
+  if (!/STRUCTURAL/.test(out) || !/VERIFIED/.test(out)) fail(`${t}: should stay safe, by its movements`); ok(`Parallel Lines ${t}: the first formation is the transformed one, and safety is inherited`) }
+{ const x = structuredClone(programs[0]); x.sections[2].ops[0].shape = 'trade'; const { out } = runProgram('disproved marker', x); if (!/DISPROVED collision 3/.test(out)) fail('Lean should report what it disproved'); ok('Lean reports exactly which property and step it disproved') }
 const vocabT = fs.readFileSync(path.join(root, 'app/src/lib/program.ts'), 'utf8'), leanFiles = fs.readdirSync(path.join(lean, 'Choreo'), { recursive: true }).filter(f => String(f).endsWith('.lean')).map(f => fs.readFileSync(path.join(lean, 'Choreo', String(f)), 'utf8')).join('\n')
 for (const m of vocabT.matchAll(/theorem: '([\w.]+)'/g)) if (!new RegExp(`theorem ${m[1]}\\b`).test(leanFiles)) fail(`the app names a theorem that does not exist: ${m[1]}`)
 const viewT = fs.readFileSync(path.join(root, 'app/src/ui/VerifyView.tsx'), 'utf8')

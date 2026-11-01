@@ -24,7 +24,7 @@ describe('the verification summary renders each state', () => {
 })
 describe('a failure says what happened', () => {
   const bad = report({ problems: [{ kind: 'collision', phase: 0, i: 1, j: 0, second: 4, distance: 120, text: 'Arjun and Priya come too close' }] })
-  const list = (status: KernelState['status']) => renderToStaticMarkup(<FailureList report={bad} kernel={{ ...base, status }} onGo={() => {}} />)
+  const list = (status: KernelState['status']) => renderToStaticMarkup(<FailureList report={bad} kernel={{ ...base, status, contract: { steps: [], links: [], broken: [], composed: false, sameRoutine: false, disproved: { kind: 'collision', phase: 0 } } }} onGo={() => {}} />)
   it('names the dancers, the moment and the numbers', () => {
     const h = list('refuted')
     for (const want of ['Arjun and Priya', '0:04.0', 'eight 2, count 1', 'At least 60 cm', '12 cm apart', 'Show me']) expect(h).toContain(want)

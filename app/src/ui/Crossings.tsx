@@ -12,7 +12,7 @@ export function Crossings({ report, kernel, onWatch, onCrash, onFocus }: { repor
   const list = useMemo(() => crossingsOf(report), [report.fingerprint])
   if (!list.length) return null
   const verified = kernel.status === 'verified', failed = kernel.status === 'refuted'
-  const bad = (c: Crossing) => failed && report.problems.find(p => p.kind === 'collision' && p.second !== undefined && p.second >= c.from && p.second <= c.to)
+  const bad = (c: Crossing) => failed && report.problems.find(p => p.kind === 'collision' && p.phase === kernel.contract?.disproved?.phase && p.second !== undefined && p.second >= c.from && p.second <= c.to)
   return <section className="crossings" aria-label="Coming on and going off">
     <h3>Coming on and going off</h3>
     {list.map(c => { const hit = bad(c)

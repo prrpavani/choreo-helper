@@ -303,6 +303,7 @@ def proofSource (b : Built) (program : List CStep := []) (start : State := []) :
         out := out ++ "/-- This exact routine is proved unsafe, by a concrete moment. -/\n"
         out := out ++ s!"theorem routine_is_unsafe : ¬ RoutineSpec Rat routine :=\n  refute_routine (ph := ph{k}) (by simp [routine]) (show ¬ PhaseSpec Rat cfg ph{k} from {proof})\n\n"
         out := out ++ "#print axioms routine_is_unsafe\n"
+        out := out ++ s!"#eval IO.println \"DISPROVED {match p with | .offStage .. => "offstage" | _ => "collision"} {k}\"\n"
         out := out ++ "#eval IO.println \"REFUTED\"\n"
       | none => pure ()
     | none =>

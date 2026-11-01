@@ -23,9 +23,13 @@ describe('the movement state only ever comes from the kernel', () => {
 })
 describe('what is claimed', () => {
   it('is movement and nothing else', () => { expect(summarize(report(), proved).map(c => c.name)).toEqual(['Movement']) })
+  it('claims a failure only for what Lean disproved', () => {
+    const r = report({ problems: [{ kind: 'fast', phase: 0, i: 0, text: 'x' }] })
+    expect(summarize(r, { status: 'refuted', parts: none, contract: { disproved: { kind: 'collision', phase: 0 } } })[0].items.find(i => i.text.startsWith('Speed'))?.ok).toBe(true)
+  })
   it('marks a collision', () => {
     const r = report({ problems: [{ kind: 'collision', phase: 0, i: 1, j: 0, second: 4, distance: 0, text: 'x' }], checked: { formation: true, movement: false, musicality: true, movementJoins: true } })
-    const m = summarize(r, { status: 'refuted', parts: none })[0]
+    const m = summarize(r, { status: 'refuted', parts: none, contract: { disproved: { kind: 'collision', phase: 0 } } })[0]
     expect(m.items.find(i => i.text.startsWith('No collisions'))?.ok).toBe(false)
   })
 })

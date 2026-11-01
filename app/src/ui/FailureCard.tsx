@@ -25,7 +25,7 @@ function Card({ p, report, onGo, proved }: { p: Problem; report: Report; onGo: (
       {p.kind === 'fast' && <><dt>Limit</dt><dd>{report.config.vmax / 1000} m/s</dd></>}
       {report.phases[p.phase] && <><dt>During</dt><dd>{report.phases[p.phase].label}</dd></>}
     </dl>
-    <p className="fail-why">{WHY[p.kind] ?? p.text}{proved && (p.kind === 'collision' || p.kind === 'offstage') ? ' This is proved: Lean checked this exact moment.' : ''}</p>
+    <p className="fail-why">{WHY[p.kind] ?? p.text}{proved && (p.kind === 'collision' || p.kind === 'offstage') ? ' This is proved: Lean checked this exact moment.' : ' The checker flagged this. Lean has not separately proved it.'}</p>
     {p.second !== undefined && <button className="btn sm light" onClick={() => onGo(p)}>Show me</button>}
   </article>
 }
@@ -35,6 +35,6 @@ export function FailureList({ report, kernel, onGo }: { report: Report; kernel: 
   const seen = new Set<string>()
   const list = report.problems.filter(p => { const k = `${p.kind}:${Math.min(p.i ?? 0, p.j ?? 0)}:${Math.max(p.i ?? 0, p.j ?? 0)}`; if (seen.has(k)) return false; seen.add(k); return true })
   if (!list.length) return null
-  return <section aria-label="What went wrong">{list.slice(0, 3).map((p, i) => <Card key={i} p={p} report={report} onGo={onGo} proved={kernel.status === 'refuted'} />)}
+  return <section aria-label="What went wrong">{list.slice(0, 3).map((p, i) => <Card key={i} p={p} report={report} onGo={onGo} proved={kernel.status === 'refuted' && kernel.contract?.disproved?.phase === p.phase && kernel.contract?.disproved?.kind === p.kind} />)}
     {list.length > 3 && <p className="fail-why" style={{ padding: '8px 20px', margin: 0 }}>And {list.length - 3} more with the same cause or nearby.</p>}</section>
 }

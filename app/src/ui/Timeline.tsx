@@ -2,21 +2,21 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { clock } from '../lib/clock'
 import { KIND_COLOR, KIND_NAME, Report, clearanceSeries, fmtTime, tickToSec, Problem } from '../lib/routine'
 
-interface Props { report: Report; provedPhases: number; status: string; focus: Problem | null }
+interface Props { report: Report; provedPhases: number; status: string; focus: Problem | null; disprovedPhase?: number }
 
 /** Two lanes sharing one time axis: the moves, and how close the closest pair gets. */
-export function Timeline({ report, provedPhases, status, focus }: Props) {
+export function Timeline({ report, provedPhases, status, focus, disprovedPhase }: Props) {
   const cv = useRef<HTMLCanvasElement>(null)
   const series = useMemo(() => clearanceSeries(report), [report.fingerprint])
   const [tip, setTip] = useState<{ x: number; text: string } | null>(null)
-  const live = useRef({ report, provedPhases, status, focus, series }); live.current = { report, provedPhases, status, focus, series }
+  const live = useRef({ report, provedPhases, status, focus, series, disprovedPhase }); live.current = { report, provedPhases, status, focus, series, disprovedPhase }
   const PAD = 16
   useEffect(() => {
     const c = cv.current!, ctx = c.getContext('2d')!
     let raf = 0
     const draw = () => {
       raf = requestAnimationFrame(draw)
-      const { report: r, provedPhases, status, focus, series } = live.current
+      const { report: r, provedPhases, status, focus, series, disprovedPhase } = live.current
       const dpr = devicePixelRatio || 1, W = c.clientWidth, H = c.clientHeight
       if (c.width !== W * dpr || c.height !== H * dpr) { c.width = W * dpr; c.height = H * dpr }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H)
@@ -29,7 +29,7 @@ export function Timeline({ report, provedPhases, status, focus }: Props) {
         ctx.fillStyle = KIND_COLOR[p.kind] ?? '#555'
         const judged = status !== 'not_checked' && status !== 'running'
         ctx.globalAlpha = p.ok || !judged ? (proved ? 1 : .35) : 1
-        if (!p.ok && judged) ctx.fillStyle = '#E5483D'
+        if (!p.ok && judged) ctx.fillStyle = i === disprovedPhase ? '#E5483D' : '#8A6A2A'
         ctx.beginPath(); ctx.roundRect(a + 1, py, w, ph, 4); ctx.fill(); ctx.globalAlpha = 1
       })
       // combine repeat holds into one label

@@ -25,7 +25,8 @@ export function Section({ title, children, open = true, count }: { title: string
 }
 
 export function ProofRail({ report, kernel, onFocus, onUndo, canUndo, onReadProof, selection, onClearSelection, history, currentId, onRestore, onVerify, onApplyScene, crossings, onUseSeconds, settings }: { settings?: React.ReactNode; crossings?: React.ReactNode; onUseSeconds?: (s: number) => void; report: Report; kernel: KernelState; onFocus: (p: Problem) => void; onUndo: () => void; canUndo: boolean; onReadProof: () => void; selection: number[]; onClearSelection: () => void; history: HistoryEntry[]; currentId: number; onRestore: (e: HistoryEntry) => void; onVerify: () => void; onApplyScene: (s: SceneData, change: string) => void }) {
-  const first = report.problems.find(p => p.second !== undefined) ?? report.problems[0]
+  const dis = kernel.contract?.disproved
+  const first = report.problems.find(p => dis && p.phase === dis.phase && p.kind === dis.kind) ?? report.problems.find(p => p.second !== undefined) ?? report.problems[0]
   const running = kernel.status === 'running'
   const railRef = useRef<HTMLElement>(null)
   useEffect(() => { railRef.current?.scrollTo({ top: 0, behavior: 'smooth' }) }, [report.fingerprint, kernel.status])

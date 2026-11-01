@@ -6,6 +6,7 @@ export type CategoryState = 'verified' | 'attention' | 'checking' | 'not_checked
 export interface KernelResult {
   status: 'running' | 'verified' | 'refuted' | 'not_proved' | 'error' | 'timeout' | 'not_checked'
   parts: Record<CategoryKey, boolean>
+  contract?: { disproved?: { kind: string; phase: number } | null }
 }
 export interface Category {
   key: CategoryKey; name: string; question: string; state: CategoryState; stateLabel: string
@@ -35,7 +36,7 @@ export function summarize(report: Report, kernel: KernelResult): Category[] {
     const state = stateOf(key, report, kernel), m = META[key], seen = new Map<string, boolean>()
     const items = [...seen].map(([text, ok]) => ({ text, ok }))
     if (key === 'movement') {
-      const has = (k: string) => report.problems.some(p => p.kind === k)
+      const has = (k: string) => kernel.contract?.disproved?.kind === k
       items.unshift(
         { text: `No collisions: nobody within ${dmin / 10} cm of anyone, at any moment`, ok: !has('collision') && !has('unproved') },
         { text: 'In bounds: everyone stays on the stage or in the wings', ok: !has('offstage') },

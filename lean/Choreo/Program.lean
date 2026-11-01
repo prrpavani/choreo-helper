@@ -323,7 +323,11 @@ def buildProgram (sp : ProgramSpec) (_names : Names) : Built × List CStep :=
     { label := c.label, kind := c.kind, beats := c.step.op.beats, bounds := env, dmin := sp.gap,
       paths := (List.range sp.n).map (c.step.op.pathOf sp.n c.before) }
   let (phases, _) := drafts.foldl (fun (acc, t) d => (acc ++ [d.toPhase sp.n t], t + d.beats * 4)) (([] : List Phase), 0)
-  let frames := start :: (steps.map (·.after))
+  -- after a whole-routine transformation, the routine starts where its first step starts
+  let first := match steps.head? with
+    | some c => c.before
+    | none => start
+  let frames := first :: (steps.map (·.after))
   let plan : Plan := { seconds, bpm := (beats * 60) / max 1 seconds, genre := if sp.genre.isEmpty then "Cinematic" else sp.genre,
                        n := sp.n, left := 0, right := 0, moves := [], gap := sp.gap }
   let built : Built :=
@@ -335,7 +339,7 @@ def buildProgram (sp : ProgramSpec) (_names : Names) : Built × List CStep :=
   let rec allOk : List CStep → State → Bool
     | [], _ => true
     | c :: cs, cur => c.step.op.enabled cfg cur && allOk cs c.after
-  ({ built with structural := !steps.isEmpty && allOk steps start }, steps)
+  ({ built with structural := !steps.isEmpty && allOk steps first }, steps)
 
 /-! ## Reading a program from the editor -/
 

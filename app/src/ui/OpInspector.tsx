@@ -1,10 +1,10 @@
-import { BRIDGE, DANCER_COUNTS, HOW_WORD, ProgOp, ProgStep, ProgramDef, ProgramReport, SHAPES, SHAPE_NAME, STATUS_WORD, STEP_CHOICES, linkStatus, moveOp, opStatus, setOp, stepStatus, stepsOfOp, surfaceOf } from '../lib/program'
+import { BRIDGE, DANCER_COUNTS, HOW_WORD, Status, WHAT_HAPPENED, ProgOp, ProgStep, ProgramDef, ProgramReport, SHAPES, SHAPE_NAME, STATUS_WORD, STEP_CHOICES, linkStatus, moveOp, opStatus, setOp, stepStatus, stepsOfOp, surfaceOf } from '../lib/program'
 import { KernelState } from './ProofRail'
 import { Dot } from './Sequence'
 import { Declaration } from './VerifyView'
 
 /** The real parabola from Lean: this pair's squared distance over the move, with its exact lowest point. */
-function Parabola({ c, limit }: { c: NonNullable<ProgStep['closest']>; limit: number }) {
+function Parabola({ c, limit, status }: { c: NonNullable<ProgStep['closest']>; limit: number; status: Status }) {
   const f = (u: number) => c.A * u * u + 2 * c.B * u + c.C, u0 = c.uNum / c.uDen, W = 240, H = 74, vals = Array.from({ length: 41 }, (_, k) => f(k / 40)), lim = limit * limit
   const hi = Math.max(...vals, lim) * 1.08 || 1, X = (u: number) => 4 + u * (W - 8), Y = (v: number) => H - 6 - v / hi * (H - 12)
   const cm = Math.round(Math.sqrt(Math.max(0, c.distSq)) / 10)
@@ -14,7 +14,7 @@ function Parabola({ c, limit }: { c: NonNullable<ProgStep['closest']>; limit: nu
       <polyline points={vals.map((v, k) => `${X(k / 40)},${Y(v)}`).join(' ')} className="para-line" />
       <circle cx={X(u0)} cy={Y(f(u0))} r={4} className={c.clash ? 'para-low bad' : 'para-low'} />
     </svg>
-    <p className="lp-not">{c.clash ? `Too close at exactly ${c.uNum}/${c.uDen} of the way through. Lean proves this as a concrete collision.` : 'This is every moment of the move, not sampled frames: the lowest point of the curve is worked out exactly.'}</p>
+    <p className="lp-not">{c.clash ? `Too close at exactly ${c.uNum}/${c.uDen} of the way through.` : status === 'proved' ? 'The closest separation is established mathematically over the entire movement, not by checking animation frames. Distance squared becomes a quadratic in how far along the movement the dancers are.' : 'Calculated from the exact paths. Lean has not confirmed this version yet.'}</p>
   </figure>
 }
 const COUNTS = [4, 6, 8, 12, 16, 20, 24, 32]
@@ -38,8 +38,15 @@ export function OpInspector({ program, report, kernel, at, onChange, onSelect, g
       {op.kind === 'parallel' && <label className="param"><span>Line between groups</span><select aria-label="Line between groups" value={op.line ?? 0} onChange={e => set({ line: Number(e.target.value) }, `Moved the line to ${Number(e.target.value) / 10} cm`)}>{[-1500, -300, 0, 1500].map(q => <option key={q} value={q}>{q / 10} cm from centre</option>)}</select></label>}
       {op.kind !== 'step' && <label className="param"><span>Counts</span><select value={op.counts ?? 8} onChange={e => set({ counts: Number(e.target.value) }, `${Number(e.target.value)} counts`)}>{COUNTS.map(c => <option key={c}>{c}</option>)}</select></label>}
     </div>
-    {first?.closest && <Parabola c={first.closest} limit={gap} />}
-    {first && bridge && <div className={`how how-${bridge.how}`}><b>{HOW_WORD[bridge.how]}</b><p>{bridge.because}</p><p className="how-helps">{bridge.helps}</p></div>}
+    {first?.closest && <Parabola c={first.closest} limit={gap} status={status} />}
+    {first && bridge && <div className={`how how-${bridge.how}`}><b>{HOW_WORD[bridge.how]}</b>
+      <h5>What happened</h5><p>{WHAT_HAPPENED[op.kind]}</p>
+      <h5>Why this is guaranteed</h5><p>{bridge.because}</p>
+      <h5>Lean theorem</h5><p><code>{bridge.theorem}</code></p>
+      <p className="how-helps">{bridge.helps}</p></div>}
+    {first && bridge && (() => { const main: Status = status === 'broken' ? 'unknown' : status, other: Status = status === 'proved' ? 'proved' : status === 'refuted' || status === 'broken' ? 'unknown' : status
+      const rows: [string, Status, string][] = [...(bridge.how === 'inherited' ? [['Pairwise distances preserved', main, ''], ['Collision freedom preserved', main, '']] as [string, Status, string][] : [[bridge.property, main, '']] as [string, Status, string][]), ['Stage containment', other, 'Checked separately'], ['Speed limit', other, 'Checked separately']]
+      return <table className="op-table" aria-label="What Lean establishes for this movement"><tbody>{rows.map(([p, s, note]) => <tr key={p}><th>{p}{note && <small>{note}</small>}</th><td><Dot s={s} />{STATUS_WORD[s]}</td></tr>)}</tbody></table> })()}
     {first && <div className="contract">
       <div className={`c-row ${link}`}><div className="c-h"><Dot s={link} />Needs</div><p>{first.requires}</p>{link === 'broken' && <p className="c-why"><b>Not met.</b> {first.why}.</p>}</div>
       <div className={`c-row ${stepStatus(kernel, last)}`}><div className="c-h"><Dot s={stepStatus(kernel, last)} />Gives you</div><p>{last.ensures}</p></div>

@@ -6,7 +6,7 @@ export interface ProgSection { name: string; ops: ProgOp[] }
 export interface ProgramDef { id: string; title: string; idea: string; blurb: string; genre: string; bpm: number; n: number; gap: number; start: string; sections: ProgSection[] }
 export interface ProgStep { index: number; surface: number; section: string; name: string; kind: string; counts: number; requires: string; ensures: string; requiresLean: string; ensuresLean: string; requiresOk: boolean; runsOk: boolean; ok: boolean; why: string; algebra: string; opKind: 'exact' | 'rule'; closest: { i: number; j: number; names: string; uNum: number; uDen: number; A: number; B: number; C: number; distSq: number; clash: boolean } | null; before: [number, number][]; after: [number, number][] }
 export interface ProgramReport { steps: ProgStep[]; composable: boolean; runs: { first: number; last: number; steps: number; names: string[] }[]; pairs: number }
-export interface ContractResult { steps: number[]; links: number[]; broken: number[]; composed: boolean; sameRoutine: boolean; algebra?: number[]; library?: boolean; structural?: boolean; witnesses?: number[] }
+export interface ContractResult { steps: number[]; links: number[]; broken: number[]; composed: boolean; sameRoutine: boolean; algebra?: number[]; library?: boolean; structural?: boolean; witnesses?: number[]; disproved?: { kind: string; phase: number } | null }
 export type Status = 'pending' | 'running' | 'proved' | 'refuted' | 'broken' | 'unknown' | 'error'
 export const STATUS_WORD: Record<Status, string> = { pending: 'Not checked', running: 'Checking', proved: 'Proved', refuted: 'Disproven', broken: 'Contract not met', unknown: 'Unknown', error: 'Unknown' }
 
@@ -22,14 +22,14 @@ export const moveOp = (p: ProgramDef, si: number, oi: number, dir: number): Prog
 export const stepsOfOp = (r: ProgramReport | null | undefined, surface: number) => (r?.steps ?? []).filter(s => s.surface === surface)
 
 interface KernelLike { status: string; contract?: ContractResult }
-/** A step's status, only ever from what the kernel reported. */
+/** A step's status, only ever from what the kernel reported. Anything it didn't establish either way is Unknown. */
 export function stepStatus(k: KernelLike, st: ProgStep): Status {
   if (k.status === 'running') return 'running'
   if (k.status === 'not_checked') return 'pending'
   if (k.status === 'error' || k.status === 'timeout') return 'error'
+  if (k.contract?.witnesses?.includes(st.index) || k.contract?.disproved?.phase === st.index) return 'refuted'
   if (k.contract?.broken.includes(st.index)) return 'broken'
-  if (k.contract?.steps.includes(st.index)) return 'proved'
-  return k.status === 'refuted' ? 'refuted' : 'unknown'
+  return k.contract?.steps.includes(st.index) ? 'proved' : 'unknown'
 }
 export function linkStatus(k: KernelLike, st: ProgStep): Status {
   if (k.status === 'running') return 'running'
@@ -93,7 +93,12 @@ export const BRIDGE: Record<string, { formal: string; property: string; theorem:
   step: { formal: 'Op.slide', property: 'Every gap stays the same', theorem: 'same_shift_same_gap', how: 'inherited', helps: 'Add steps in unison freely. They can\'t cause a clash.', because: 'Everyone does the same step at the same time, so nobody gets closer to anyone.' },
   wait: { formal: 'Op.slide', property: 'Every gap stays the same', theorem: 'same_shift_same_gap', how: 'inherited', helps: 'A hold can\'t cause a clash.', because: 'Nobody moves.' },
   parallel: { formal: 'Op.par', property: 'The two groups can\'t meet', theorem: 'par_pair_safe', how: 'rule', helps: 'Choreograph each half separately. They combine safely as long as each stays on its side.', because: 'A line stays between the groups, so no pair across them needs checking.' },
-  move: { formal: 'Op.move', property: 'Every pair stays apart the whole way', theorem: 'linear_pair_safe', how: 'exact', helps: 'Two formations can each be fine while the walk between them collides. This checks the walk, at every instant, and if it fails you get who and exactly when.', because: 'Dancers go their own ways, so no general rule applies. But the squared distance between two of them is a parabola, so Lean finds its exact lowest point instead of sampling frames.' },
-  scale: { formal: 'Op.move', property: 'Every pair stays apart the whole way', theorem: 'linear_pair_safe', how: 'exact', helps: 'Know how much room a compressed formation leaves, and that the walk there is clear.', because: 'Each pair\'s distance is a parabola with an exact lowest point. Scaling also multiplies every gap by the same factor.' },
+  move: { formal: 'Op.move', property: 'Every pair stays apart the whole way', theorem: 'linear_pair_safe', how: 'exact', helps: 'Two formations can each be fine while the walk between them collides. This checks the walk, at every instant, and if it fails you get who and exactly when.', because: 'Dancers go their own ways, so no general rule applies. Distance squared becomes a quadratic in how far along the movement the dancers are, so Lean works out its exact lowest point.' },
+  scale: { formal: 'Op.move', property: 'Every pair stays apart the whole way', theorem: 'linear_pair_safe', how: 'exact', helps: 'Know how much room a compressed formation leaves, and that the walk there is clear.', because: 'Distance squared becomes a quadratic in how far along the movement the dancers are, so Lean works out its exact lowest point.' },
+}
+export const WHAT_HAPPENED: Record<string, string> = {
+  translate: 'The whole formation shifted together.', rotate: 'The formation rotated around the centre of the stage.', mirror: 'Each dancer walked straight across to their mirror image.',
+  exchange: 'The two groups walked through each other and traded sides.', step: 'Everyone danced the step in unison.', wait: 'Everyone held their place.',
+  parallel: 'Each group formed its own shape on its own side, at the same time.', move: 'Each dancer walked in a straight line to their own new place.', scale: 'The formation expanded or contracted about the centre.',
 }
 export const HOW_WORD: Record<string, string> = { inherited: 'Inherited from a theorem', rule: 'Follows from a simple rule', exact: 'Exact continuous-time analysis' }

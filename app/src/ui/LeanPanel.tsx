@@ -76,8 +76,8 @@ export function LeanPanel({ report, kernel, onGenerate }: { report: Report; kern
     {tab === 'The four proofs' && <div>
       <VerificationSummary report={report} kernel={kernel} />
       <div style={{ height: 12 }} />
-      <div className="lp-rules">{RULES.map(r => { const bad = r.kinds.some(k => report.problems.some(p => p.kind === k)) || (r.name === 'No jumps' && report.checked?.movementJoins === false), stale = kernel.status === 'running' || kernel.status === 'not_checked', mark = bad && !stale ? 'no' : verified ? 'ok' : 'wait'
-        return <article className="lp-rule" key={r.name}><h4 className="lp-rule-h"><span className={`mark ${mark}`}>{mark === 'ok' ? '✓' : mark === 'no' ? '✕' : ''}</span>{r.name}<em>{mark === 'ok' ? 'Proved' : mark === 'no' ? 'Fails' : stale ? 'Not checked' : 'Not proved'}</em></h4>
+      <div className="lp-rules">{RULES.map(r => { const bad = !!kernel.contract?.disproved && r.kinds.includes(kernel.contract.disproved.kind), stale = kernel.status === 'running' || kernel.status === 'not_checked', mark = bad && !stale ? 'no' : verified ? 'ok' : 'wait'
+        return <article className="lp-rule" key={r.name}><h4 className="lp-rule-h"><span className={`mark ${mark}`}>{mark === 'ok' ? '✓' : mark === 'no' ? '✕' : ''}</span>{r.name}<em>{mark === 'ok' ? 'Proved' : mark === 'no' ? 'Disproven' : stale ? 'Not checked' : 'Unknown'}</em></h4>
           <p>{r.simple}</p>
           <div className="lp-th"><span>The theorem</span><code>{r.field}</code></div>
           <pre className="lp-pre">{r.statement}</pre>

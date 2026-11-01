@@ -19,8 +19,8 @@
       ["Choreo.Calculus:importAllArts", "b704c93cdf19b97b"],
       ["Choreo.Intent transitive imports (legacy)", "f06fe8bd56a0a209"],
       ["Choreo.Intent:importAllArts", "d6fb358616901b0b"],
-      ["Choreo.Emit transitive imports (legacy)", "4a44f38271f18643"],
-      ["Choreo.Emit:importAllArts", "64b21b55417b25e0"],
+      ["Choreo.Emit transitive imports (legacy)", "3ec0c42b3cffd10d"],
+      ["Choreo.Emit:importAllArts", "5a024d704321a5f8"],
       ["Choreo.Examples transitive imports (legacy)", "c88a5caa7108e193"],
       ["Choreo.Examples:importAllArts", "19b106f24608373a"],
       ["Choreo.Compose transitive imports (legacy)", "4c4a1baa8aa9642d"],
@@ -50,4 +50,4 @@
   ["Module.name: Choreo", "f2dfdbdaa00d298b"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "b6b20071884f61d6"}
+ "depHash": "11347701ce87af3e"}
