@@ -106,11 +106,11 @@ const programs = JSON.parse(fs.readFileSync(path.join(root, 'app/src/data/progra
 const runProgram = (label, prog, transform = '') => { const req = path.join(tmp, 'r.json'), proof = path.join(tmp, 'G.lean'); fs.writeFileSync(req, JSON.stringify({ program: prog, transform }))
   const rep = JSON.parse(execFileSync(exe, ['compose', req, proof], { cwd: lean, env, encoding: 'utf8', maxBuffer: 1 << 28 })); const out = spawnSync('lean', [proof], { cwd: lean, env, encoding: 'utf8' }).stdout
   if (/error:|declaration uses 'sorry'|sorryAx/.test(out)) fail(`${label}: ${out.slice(0, 600)}`); return { rep, out } }
-for (const p of programs) { const { out } = runProgram(p.title, p); if (!/COMPOSED/.test(out) || !/SAMEROUTINE/.test(out) || !/VERIFIED/.test(out)) fail(`${p.title} should compose and be safe`); ok(`${p.title}: the composition holds, and it is the routine that plays`) }
-for (const t of ['mirror', 'half', 'upstage', 'reverse']) { const { out } = runProgram(`Mirror Waltz ${t}`, programs[1], t); if (!/VERIFIED/.test(out)) fail(`transform ${t} should stay safe`); ok(`Mirror Waltz, ${t}: safe`) }
-{ const c = structuredClone(programs[0]); c.sections[3].ops = [{ kind: 'move', shape: 'diamond', counts: 12, title: 'Move to Diamond' }]
+for (const p of programs) { const { out } = runProgram(p.title, p); if (!/COMPOSED/.test(out) || !/SAMEROUTINE/.test(out) || !/VERIFIED/.test(out)) fail(`${p.title} should compose and be safe`); if (p.id === 'parallel-lines' && !/ALGEBRA 0/.test(out)) fail('the demo should inherit its safety from the algebra'); ok(`${p.title}: the composition holds, and it is the routine that plays`) }
+for (const t of ['mirror', 'half', 'upstage', 'reverse']) { const { out } = runProgram(`Mirror Waltz ${t}`, programs.find(x => x.id === 'mirror-waltz'), t); if (!/VERIFIED/.test(out)) fail(`transform ${t} should stay safe`); ok(`Mirror Waltz, ${t}: safe`) }
+{ const c = structuredClone(programs.find(x => x.id === 'crossing-currents')); c.sections[3].ops = [{ kind: 'move', shape: 'diamond', counts: 12, title: 'Move to Diamond' }]
   const { out } = runProgram('broken link', c); if (!/LINKBROKEN/.test(out) || /COMPOSED/.test(out)) fail('removing the lanes should break the link'); ok('Crossing Currents without its lanes: the contract is rejected') }
-{ const f = structuredClone(programs[3]); f.sections[1].ops[0].line = 1500
+{ const f = structuredClone(programs.find(x => x.id === 'fracture-reunion')); f.sections[1].ops[0].line = 1500
   const { out } = runProgram('wrong line', f); if (!/LINKBROKEN/.test(out) || /COMPOSED/.test(out) || !/VERIFIED/.test(out)) fail('this should be safe, with a broken contract'); ok('Fracture with the line moved: safe, but the contract is rejected. Those are different failures') }
 const vocabT = fs.readFileSync(path.join(root, 'app/src/lib/program.ts'), 'utf8'), leanFiles = fs.readdirSync(path.join(lean, 'Choreo')).map(f => fs.readFileSync(path.join(lean, 'Choreo', f), 'utf8')).join('\n')
 for (const m of vocabT.matchAll(/theorem: '([\w.]+)'/g)) if (!new RegExp(`theorem ${m[1]}\\b`).test(leanFiles)) fail(`the app names a theorem that does not exist: ${m[1]}`)

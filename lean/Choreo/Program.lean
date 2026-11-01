@@ -1,5 +1,6 @@
 import Choreo.Planner
 import Choreo.Language
+import Choreo.Composition
 import Lean.Data.Json
 /-!
 # Compiling a choreography program
@@ -69,6 +70,14 @@ def mirroredPlaces (n : Nat) : State :=
     let k : Int := (i / 2 : Nat)
     ⟨(if i % 2 == 0 then -1 else 1) * (1000 + k * 800), 2000 + k * 1100⟩
 
+/-- Two parallel lines, half a space apart, so nobody shares a lane with anyone in the other line. -/
+def staggeredLines (n : Nat) : State :=
+  let back := n / 2
+  let front := n - back
+  let row (count : Nat) (y shift : Int) : State := (List.range count).map fun (k : Nat) =>
+    ⟨(2 * (k : Int) + 1 - (count : Int)) * 900 + shift, y⟩
+  row front 3000 (-450) ++ row back 5000 450
+
 def namedPlaces (name : String) (n : Nat) (gap : Int) : State :=
   let shape (s : Shape) := s.formation n |>.slots |>.map slotPt
   match name with
@@ -88,6 +97,7 @@ def namedPlaces (name : String) (n : Nat) (gap : Int) : State :=
   | "lanes" => evenLanes n gap
   | "arc" => arcPlaces n
   | "symmetric" => mirroredPlaces n
+  | "staggered" => staggeredLines n
   | _ => shape .circle
 
 /-- A group's shape in its own half of the stage. -/
@@ -120,6 +130,10 @@ structure CStep where
   ensuresText : String
   before : State
   after : State
+  /-- The operation in the movement algebra, if this step is one: it moves the formation as a whole. -/
+  algebra : Option Algebra.TOp := none
+
+instance : Inhabited CStep := ⟨{ name := "", sectionName := "", surface := 0, kind := "", label := "", step := { op := .slide [] 0 }, requiresText := "", ensuresText := "", before := [], after := [] }⟩
 
 structure CState where
   pos : State
@@ -137,9 +151,9 @@ def compileOp (sp : ProgramSpec) (st : CState) (o : SurfaceOp) : CState :=
   let s := st.pos
   let gap := sp.gap
   let certsFor (paths : List Path) := chooseCerts n paths gap
-  let add (name kind label : String) (step : Step) (rq en : String) (st : CState) : CState :=
+  let add (name kind label : String) (step : Step) (rq en : String) (st : CState) (algebra : Option Algebra.TOp := none) : CState :=
     let next := step.op.next n st.pos
-    { pos := next, steps := st.steps ++ [{ name, sectionName := o.section', surface := o.index, kind, label, step, requiresText := rq, ensuresText := en, before := st.pos, after := next }] }
+    { pos := next, steps := st.steps ++ [{ name, sectionName := o.section', surface := o.index, kind, label, step, requiresText := rq, ensuresText := en, before := st.pos, after := next, algebra }] }
   let uniform (dx dy : Int) : List (Int × Int) := (List.range n).map fun _ => (dx, dy)
   let shown (fallback : String) := if o.title.isEmpty then fallback else o.title
   match o.kind with
@@ -163,37 +177,40 @@ def compileOp (sp : ProgramSpec) (st : CState) (o : SurfaceOp) : CState :=
       add (shown s!"Rotate {o.quarters * 90}°") "rotate" (shown "Rotate")
         { op := .turn centre o.ccw o.counts (certsFor paths) orbits }
         "Lean's checker passes these exact arcs from where everyone stands."
-        "Each dancer stays exactly the same distance from the centre, at every moment." st) st
+        "Each dancer stays exactly the same distance from the centre, at every moment." st
+        (if o.ccw then some (.rotate centre.x centre.y 1) else some (.rotate centre.x centre.y 3))) st
   | "translate" =>
     add (shown "Move everyone together") "form" (shown "Translate")
       { op := .slide (uniform o.dx o.dy) o.counts, requires := .separated n gap }
       s!"Everyone is at least {gap / 10} cm apart to begin with."
-      "Every gap stays exactly as it was, at every moment." st
+      "Every gap stays exactly as it was, at every moment." st (some (.translate o.dx o.dy))
   | "exchange" =>
     let (a, b) := groupsOf s n
     let dist : Int := (s.at (b.headD 0)).x - (s.at (a.headD 0)).x
     let ds := (List.range n).map fun i => if a.contains i then (dist, (0 : Int)) else (-dist, (0 : Int))
-    add (shown "Exchange groups") "zipper" (shown "Exchange groups")
+    add (shown "Exchange groups") "swap" (shown "Exchange groups")
       { op := .slide ds o.counts, requires := .twoGroups a b gap, ensures := .twoGroups a b gap }
       s!"Two groups in separate lanes: every member of one is at least {gap / 10} cm upstage or downstage of every member of the other."
       "The groups have traded sides, still in their lanes. Nobody meets anybody on the way." st
   | "wait" =>
     add (shown "Hold") "hold" "Hold" { op := .slide (uniform 0 0) o.counts, requires := .separated n gap }
-      s!"Everyone is at least {gap / 10} cm apart." "Nobody moves." st
+      s!"Everyone is at least {gap / 10} cm apart." "Nobody moves." st (some (.translate 0 0))
   | "step" =>
     let moves := stepMoves o.step
     let title := stepTitle o.step
     let (st, _) := moves.foldl (fun (acc : CState × Nat) m =>
       let (st, _) := acc
       (add (shown title) "hold" title { op := .slide (uniform m.1 m.2.1) m.2.2, requires := .separated n gap }
-        s!"Everyone is at least {gap / 10} cm apart." "They dance in unison, so every gap stays exactly as it was." st, 0)) (st, 0)
+        s!"Everyone is at least {gap / 10} cm apart." "They dance in unison, so every gap stays exactly as it was." st (some (.translate m.1 m.2.1)), 0)) (st, 0)
     st
   | "mirror" =>
-    let target := (List.range n).map fun i => (⟨-(s.at i).x, (s.at i).y⟩ : Pt)
-    let paths := (List.range n).map fun i => easePath (s.at i) (target.at i)
-    add (shown "Mirror") "flip" (shown "Mirror") { op := .move target o.counts (certsFor paths), ensures := .isAt target }
-      "Lean's checker passes these exact paths from where everyone stands."
-      "Everyone stands at the mirror image of where they began." st
+    -- everyone walks straight across, so anyone crossing paths needs their own lane
+    let (l, r) := groupsOf s n
+    let ds := (List.range n).map fun i => (-2 * (s.at i).x, (0 : Int))
+    add (shown "Mirror") "flip" (shown "Mirror")
+      { op := .slide ds o.counts, requires := .twoGroups l r gap, ensures := .twoGroups l r gap }
+      s!"Dancers crossing to the other side each have their own lane: at least {gap / 10} cm upstage or downstage of anyone crossing the other way."
+      "Everyone stands at the mirror image of where they began. Every gap in the formation is what it was." st (some (.reflectV 0))
   | "scale" =>
     let target := (List.range n).map fun i =>
       let p := s.at i
@@ -212,7 +229,7 @@ def compileOp (sp : ProgramSpec) (st : CState) (o : SurfaceOp) : CState :=
     let target := placesWith n (inGroup l o.leftShape (o.line - 3000) ++ inGroup r o.rightShape (o.line + 3000)) s
     let paths := (List.range n).map fun i => easePath (s.at i) (target.at i)
     let pre : Pred := .splitAt l r o.line gap
-    add (shown "Two groups move at once") "canon" (shown "Parallel")
+    add (shown "Two groups move at once") "parallel" (shown "Parallel")
       { op := .par l r o.line target o.counts (certsFor paths), requires := pre, ensures := .splitAt l r o.line gap }
       s!"A line keeps the two groups apart: everyone on one side, everyone else at least {gap / 10} cm past it."
       "Each group has formed its shape on its own side, on the same count." st
@@ -299,6 +316,7 @@ def buildProgram (sp : ProgramSpec) (_names : Names) : Built × List CStep :=
   let steps :=
     if sp.transform == "reverse" then reverseSteps sp compiled
     else applyTransform sp sp.transform compiled
+  let steps := if sp.transform.isEmpty then steps else steps.map fun c => { c with algebra := none }
   let beats := (steps.map (·.step.op.beats)).foldl (· + ·) 0
   let seconds := max 1 ((beats * 60 + sp.bpm / 2) / max 1 sp.bpm)
   let every := steps.flatMap (fun c => c.before ++ c.after) ++ (if steps.isEmpty then start else [])

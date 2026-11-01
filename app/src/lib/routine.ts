@@ -80,8 +80,8 @@ export function clearanceSeries(r: Report, samples = 900): ClearanceSample[] {
   }
   return out
 }
-export const KIND_COLOR: Record<string, string> = { enter: '#5C8DF6', form: '#B49BF5', flip: '#E8B458', rotate: '#5FD6C4', hold: '#3A3444', exit: '#F2707A', exchange: '#C792EA', weave: '#E8388F', canon: '#7BD389', burst: '#FF6A1F', snake: '#F2C14E', zipper: '#4FC3F7' }
-export const KIND_NAME: Record<string, string> = { enter: 'Entrance', form: 'New shape', flip: 'Flip', rotate: 'Rotation', hold: 'Steps', exit: 'Exit', exchange: 'Cast change', weave: 'Weave', canon: 'Ripple', burst: 'Burst', snake: 'Snake', zipper: 'Zipper' }
+export const KIND_COLOR: Record<string, string> = { enter: '#5C8DF6', form: '#B49BF5', flip: '#E8B458', rotate: '#5FD6C4', hold: '#3A3444', exit: '#F2707A', swap: '#4FC3F7', parallel: '#7BD389', exchange: '#C792EA', weave: '#E8388F', canon: '#7BD389', burst: '#FF6A1F', snake: '#F2C14E', zipper: '#4FC3F7' }
+export const KIND_NAME: Record<string, string> = { enter: 'Entrance', form: 'New shape', flip: 'Flip', rotate: 'Rotation', hold: 'Steps', exit: 'Exit', swap: 'Exchange', parallel: 'Two groups', exchange: 'Cast change', weave: 'Weave', canon: 'Ripple', burst: 'Burst', snake: 'Snake', zipper: 'Zipper' }
 
 export interface Stage { index: number; kind: string; name: string; from: number; to: number; firstPhase: number; lastPhase: number }
 /** The routine's stages: runs of phases of one kind, such as the entrance or the flip. */
@@ -105,6 +105,8 @@ function stageName(p: PhaseData) {
   if (p.kind === 'exit') return 'Leave the stage'
   if (p.kind === 'rotate') return 'Rotate'
   if (p.kind === 'exchange') return 'Cast change'
+  if (p.kind === 'swap') return 'Exchange groups'
+  if (p.kind === 'parallel') return 'Two groups at once'
   if (p.kind === 'weave') return 'Weave'
   if (p.kind === 'canon') return 'Ripple'
   if (p.kind === 'burst') return 'Gather and burst'

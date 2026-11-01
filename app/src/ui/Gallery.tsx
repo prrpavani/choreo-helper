@@ -4,6 +4,7 @@ import { ProgramDef } from '../lib/program'
 const DEFS = programs as ProgramDef[]
 const ring = (n: number, r: number, off = 0): [number, number][] => Array.from({ length: n }, (_, i) => [Math.cos(i / n * 6.283 + off) * r, 4000 + Math.sin(i / n * 6.283 + off) * r * .78])
 const ART: Record<string, [number, number][]> = {
+  'parallel-lines': [[-3150, 3000], [-1350, 3000], [450, 3000], [2250, 3000], [-2250, 5000], [-450, 5000], [1350, 5000], [3150, 5000]],
   'crossing-currents': [[-3000, 1500], [-3000, 3200], [-3000, 4900], [-3000, 6600], [3000, 2350], [3000, 4050], [3000, 5750], [3000, 7450]],
   'mirror-waltz': Array.from({ length: 8 }, (_, i) => [(i % 2 ? -1 : 1) * (1000 + Math.floor(i / 2) * 1000), 1700 + Math.floor(i / 2) * 1400]),
   'the-orbit': [...ring(4, 1500), ...ring(8, 3300, .4)],

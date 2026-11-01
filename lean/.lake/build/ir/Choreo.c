@@ -1,6 +1,6 @@
 // Lean compiler output
 // Module: Choreo
-// Imports: public import Init public meta import Init public import Choreo.Refute public import Choreo.Calculus public import Choreo.Intent public import Choreo.Emit public import Choreo.Examples public import Choreo.Compose public import Choreo.Scene public import Choreo.Recipes public import Choreo.Transforms public import Choreo.LanguageExamples
+// Imports: public import Init public meta import Init public import Choreo.Refute public import Choreo.Calculus public import Choreo.Intent public import Choreo.Emit public import Choreo.Examples public import Choreo.Compose public import Choreo.Scene public import Choreo.Recipes public import Choreo.Transforms public import Choreo.LanguageExamples public import Choreo.Verification
 #include <lean/lean.h>
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wunused-parameter"
@@ -25,6 +25,7 @@ lean_object* initialize_choreo_Choreo_Scene(uint8_t builtin);
 lean_object* initialize_choreo_Choreo_Recipes(uint8_t builtin);
 lean_object* initialize_choreo_Choreo_Transforms(uint8_t builtin);
 lean_object* initialize_choreo_Choreo_LanguageExamples(uint8_t builtin);
+lean_object* initialize_choreo_Choreo_Verification(uint8_t builtin);
 void lean_initialize();
 static bool _G_initialized = false;
 LEAN_EXPORT lean_object* initialize_choreo_Choreo(uint8_t builtin) {
@@ -66,6 +67,9 @@ res = initialize_choreo_Choreo_Transforms(builtin);
 if (lean_io_result_is_error(res)) return res;
 lean_dec_ref(res);
 res = initialize_choreo_Choreo_LanguageExamples(builtin);
+if (lean_io_result_is_error(res)) return res;
+lean_dec_ref(res);
+res = initialize_choreo_Choreo_Verification(builtin);
 if (lean_io_result_is_error(res)) return res;
 lean_dec_ref(res);
 return lean_io_result_mk_ok(lean_box(0));

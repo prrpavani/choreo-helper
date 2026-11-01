@@ -7,7 +7,7 @@ import { Dot } from './Sequence'
 interface Obligation { id: string; name: string; text: string; status: Status; theorem: string; assumptions?: string; extra?: React.ReactNode }
 
 /** A real declaration from the Lean files. If it isn't there, that is what it says. */
-function Declaration({ name, proofId }: { name: string; proofId: string }) {
+export function Declaration({ name, proofId }: { name: string; proofId: string }) {
   const [d, setD] = useState<{ file: string; line: number; text: string } | null | 'none'>(null)
   useEffect(() => { let live = true; fetch(`/api/theorem/${encodeURIComponent(name)}?proof=${proofId}`).then(r => r.ok ? r.json() : 'none').then(x => { if (live) setD(x) }).catch(() => { if (live) setD('none') }); return () => { live = false } }, [name, proofId])
   if (d === null) return <p className="lp-not">Looking it up…</p>
@@ -34,6 +34,12 @@ export function VerifyView({ program, programReport, report, kernel, transform, 
     { id: 'composed', name: 'The whole program', text: kernel.contract?.composed ? 'Each guarantee met the next requirement, so the composition rule applies all the way along, and the whole program holds.' : brokenSteps.length ? 'The chain is broken, so this theorem does not exist for this version.' : 'This theorem does not exist yet for this version.', status: kernel.contract?.composed ? 'proved' : running ? 'running' : stale ? 'pending' : failed ? 'error' : brokenSteps.length ? 'broken' : 'unknown', theorem: 'program_ok' },
     { id: 'same', name: 'The program is what plays', text: 'The phases this program produces are exactly the phases of the routine on stage: same times, same paths.', status: kernel.contract?.sameRoutine ? 'proved' : running ? 'running' : stale ? 'pending' : 'unknown', theorem: 'program_plays_this_routine' },
   ] : []
+  const runs = programReport?.runs ?? []
+  const inherited: Obligation[] = runs.length ? [
+    { id: 'isometry', name: 'Isometries keep collision freedom', text: 'Translations, rotations and reflections never change a distance. So one that starts collision-free stays collision-free, for any formation.', status: 'proved', theorem: 'isometry_preserves_collision_freedom' },
+    { id: 'routine', name: 'So does any routine of them', text: 'However long the routine and in whatever order. Long routines are built from these operations without proving anything again.', status: 'proved', theorem: 'routine_preserves_collision_freedom' },
+    ...runs.map((r, k) => ({ id: `run${k}`, name: r.names.length > 3 ? `${r.names[0]} … ${r.names[r.names.length - 1]}` : r.names.join(', then '), text: `Lean checks the ${programReport!.pairs} pairs in the starting formation, once. Because each of these ${r.steps} operations keeps every distance, every later formation is collision-free. No moment of the animation is sampled.`, status: (kernel.contract?.algebra?.includes(k) ? 'proved' : running ? 'running' : stale ? 'pending' : failed ? 'error' : 'unknown') as Status, theorem: `run${k}_valid` })),
+  ] : []
   const safe = kernel.status === 'verified', move: Status = safe ? 'proved' : running ? 'running' : stale ? 'pending' : failed ? 'error' : kernel.status === 'refuted' ? 'refuted' : 'unknown'
   const has = (k: string) => report.problems.some(p => p.kind === k), rule = (k: string[]): Status => (move === 'refuted' || move === 'unknown') && !k.some(has) ? (safe ? 'proved' : 'unknown') : move
   const first = report.problems.find(p => p.second !== undefined)
@@ -52,6 +58,7 @@ export function VerifyView({ program, programReport, report, kernel, transform, 
       <button className="btn primary sm" disabled={running} onClick={onGenerate}>{running ? 'Checking…' : 'Generate Lean proof'}</button></header>
     <div className="vf-grid">
       <div>
+        <Group title="Inherited from the algebra" sub="Guarantees that follow from what these operations are." items={inherited} proofId={report.proofId} />
         <Group title="Composition" sub="Do these movements fit together?" items={comp} proofId={report.proofId} />
         <Group title="Geometry" sub="At every moment of the routine." items={geo} proofId={report.proofId} />
       </div>

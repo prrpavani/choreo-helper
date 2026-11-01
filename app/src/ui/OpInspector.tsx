@@ -1,6 +1,7 @@
-import { ProgOp, ProgStep, ProgramDef, ProgramReport, SHAPES, SHAPE_NAME, STATUS_WORD, STEP_CHOICES, linkStatus, moveOp, opStatus, setOp, stepStatus, stepsOfOp, surfaceOf } from '../lib/program'
+import { GUARANTEE, ProgOp, ProgStep, ProgramDef, ProgramReport, SHAPES, SHAPE_NAME, STATUS_WORD, STEP_CHOICES, linkStatus, moveOp, opStatus, setOp, stepStatus, stepsOfOp, surfaceOf } from '../lib/program'
 import { KernelState } from './ProofRail'
 import { Dot } from './Sequence'
+import { Declaration } from './VerifyView'
 
 const COUNTS = [4, 6, 8, 12, 16, 20, 24, 32]
 /** A movement: its settings, what it requires, and what it guarantees. */
@@ -23,7 +24,8 @@ export function OpInspector({ program, report, kernel, at, onChange, onSelect }:
     {first && <div className="contract">
       <div className={`c-row ${link}`}><div className="c-h"><Dot s={link} />Requires</div><p>{first.requires}</p>{link === 'broken' && <p className="c-why"><b>Not met.</b> {first.why}.</p>}</div>
       <div className={`c-row ${stepStatus(kernel, last)}`}><div className="c-h"><Dot s={stepStatus(kernel, last)} />Guarantees</div><p>{last.ensures}</p></div>
-      <div className="c-how">{first.opKind === 'rule' ? 'Proved by a rule about the starting places: no curve is examined.' : 'Lean checks these exact paths, at every moment.'}</div>
+      {GUARANTEE[first.algebra] ? <div className="c-row theorem"><div className="c-h">Why</div><p>{GUARANTEE[first.algebra].because}</p><details className="c-lean"><summary><code>{GUARANTEE[first.algebra].theorem}</code></summary><Declaration name={GUARANTEE[first.algebra].theorem} proofId="" /></details></div>
+        : <div className="c-how">{first.opKind === 'rule' ? 'Dancers on their own paths. Proved by a rule about the starting places: no curve is examined.' : 'Dancers on their own paths, so this needs its own analysis. Lean checks these exact paths, at every moment.'}</div>}
     </div>}
     <div className="op-actions">
       <button className="btn ghost sm" disabled={oi === 0} onClick={() => { onChange(moveOp(program, si, oi, -1), 'Moved a movement earlier'); onSelect(si, oi - 1) }}>Earlier</button>

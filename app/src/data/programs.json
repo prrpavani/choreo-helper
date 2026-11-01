@@ -1,31 +1,320 @@
 [
- {"id":"crossing-currents","title":"Crossing Currents","idea":"Compositional correctness","blurb":"Two groups trade sides through a chain of formations. Each movement has a contract, and each contract hands on to the next.","genre":"Cinematic","bpm":112,"n":8,"gap":600,"start":"rows",
-  "sections":[
-   {"name":"Establish","ops":[{"kind":"step","step":"stepTouch","title":"Step-touch"}]},
-   {"name":"Converge","ops":[{"kind":"move","shape":"circle","counts":12,"title":"Move to Circle"}]},
-   {"name":"Transform","ops":[{"kind":"rotate","quarters":1,"counts":12,"title":"Rotate 90°"}]},
-   {"name":"Open","ops":[{"kind":"move","shape":"lanes","counts":12,"title":"Open into Two Lanes"}]},
-   {"name":"Exchange","ops":[{"kind":"exchange","counts":16,"title":"Exchange Groups"}]},
-   {"name":"Resolve","ops":[{"kind":"move","shape":"diagonal","counts":16,"title":"Move to Diagonal"},{"kind":"step","step":"chasse","title":"Chassé"}]}
-  ]},
- {"id":"mirror-waltz","title":"Mirror Waltz","idea":"Transformation preservation","blurb":"A symmetrical waltz. Mirror it, turn it or play it backwards, and see which guarantees carry over by theorem.","genre":"Strings","bpm":84,"n":8,"gap":600,"start":"symmetric",
-  "sections":[
-   {"name":"Bloom","ops":[{"kind":"move","shape":"arc","counts":12,"title":"Move to Arc"}]},
-   {"name":"Waltz","ops":[{"kind":"step","step":"balance","title":"Balancé"},{"kind":"translate","dx":0,"dy":400,"counts":8,"title":"Drift Upstage"},{"kind":"step","step":"chasse","title":"Chassé"},{"kind":"translate","dx":0,"dy":-400,"counts":8,"title":"Drift Back"}]},
-   {"name":"Return","ops":[{"kind":"move","shape":"symmetric","counts":12,"title":"Back to Symmetry"}]}
-  ]},
- {"id":"the-orbit","title":"The Orbit","idea":"Geometric invariants","blurb":"Dancers circle in exact rings. Lean proves each one stays on their circle at every moment of the turn.","genre":"Cinematic","bpm":96,"n":8,"gap":600,"start":"circle",
-  "sections":[
-   {"name":"First Orbit","ops":[{"kind":"rotate","quarters":1,"counts":12,"title":"Rotate 90°"}]},
-   {"name":"Expand","ops":[{"kind":"move","shape":"wide circle","counts":12,"title":"Expand the Circle"}]},
-   {"name":"Second Orbit","ops":[{"kind":"rotate","quarters":2,"counts":12,"title":"Rotate 180°"}]},
-   {"name":"Close","ops":[{"kind":"move","shape":"circle","counts":12,"title":"Close the Circle"}]}
-  ]},
- {"id":"fracture-reunion","title":"Fracture / Reunion","idea":"Parallel composition","blurb":"An ensemble splits, each half dances its own shape at once, and they reunite. The groups are safe together because a line stays between them.","genre":"Bollywood fusion","bpm":120,"n":12,"gap":600,"start":"grid",
-  "sections":[
-   {"name":"Ensemble","ops":[{"kind":"step","step":"thumka","title":"Thumka"}]},
-   {"name":"Fracture","ops":[{"kind":"parallel","line":-300,"leftShape":"circle","rightShape":"circle","counts":16,"title":"Left and Right Circle at Once"}]},
-   {"name":"Apart","ops":[{"kind":"step","step":"jhatka","title":"Jhatka"}]},
-   {"name":"Reunion","ops":[{"kind":"move","shape":"windows","counts":16,"title":"Reunite in Windows"}]}
-  ]}
+ {
+  "id": "parallel-lines",
+  "title": "Parallel Lines",
+  "idea": "Inherited guarantees",
+  "blurb": "Eight dancers, four whole-formation moves, one proof. Nothing is checked frame by frame: safety follows from what these operations are.",
+  "genre": "Cinematic",
+  "bpm": 104,
+  "n": 8,
+  "gap": 600,
+  "start": "staggered",
+  "sections": [
+   {
+    "name": "Establish",
+    "ops": [
+     {
+      "kind": "translate",
+      "dx": 0,
+      "dy": 500,
+      "counts": 8,
+      "title": "Translate Upstage"
+     }
+    ]
+   },
+   {
+    "name": "Turn",
+    "ops": [
+     {
+      "kind": "rotate",
+      "quarters": 1,
+      "counts": 16,
+      "title": "Rotate 90°"
+     }
+    ]
+   },
+   {
+    "name": "Reflect",
+    "ops": [
+     {
+      "kind": "mirror",
+      "counts": 16,
+      "title": "Reflect"
+     }
+    ]
+   },
+   {
+    "name": "Resolve",
+    "ops": [
+     {
+      "kind": "translate",
+      "dx": 0,
+      "dy": -500,
+      "counts": 8,
+      "title": "Translate Back"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "crossing-currents",
+  "title": "Crossing Currents",
+  "idea": "Compositional correctness",
+  "blurb": "Two groups trade sides through a chain of formations. Each movement has a contract, and each contract hands on to the next.",
+  "genre": "Cinematic",
+  "bpm": 112,
+  "n": 8,
+  "gap": 600,
+  "start": "rows",
+  "sections": [
+   {
+    "name": "Establish",
+    "ops": [
+     {
+      "kind": "step",
+      "step": "stepTouch",
+      "title": "Step-touch"
+     }
+    ]
+   },
+   {
+    "name": "Converge",
+    "ops": [
+     {
+      "kind": "move",
+      "shape": "circle",
+      "counts": 12,
+      "title": "Move to Circle"
+     }
+    ]
+   },
+   {
+    "name": "Transform",
+    "ops": [
+     {
+      "kind": "rotate",
+      "quarters": 1,
+      "counts": 12,
+      "title": "Rotate 90°"
+     }
+    ]
+   },
+   {
+    "name": "Open",
+    "ops": [
+     {
+      "kind": "move",
+      "shape": "lanes",
+      "counts": 12,
+      "title": "Open into Two Lanes"
+     }
+    ]
+   },
+   {
+    "name": "Exchange",
+    "ops": [
+     {
+      "kind": "exchange",
+      "counts": 16,
+      "title": "Exchange Groups"
+     }
+    ]
+   },
+   {
+    "name": "Resolve",
+    "ops": [
+     {
+      "kind": "move",
+      "shape": "diagonal",
+      "counts": 16,
+      "title": "Move to Diagonal"
+     },
+     {
+      "kind": "step",
+      "step": "chasse",
+      "title": "Chassé"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "mirror-waltz",
+  "title": "Mirror Waltz",
+  "idea": "Transformation preservation",
+  "blurb": "A symmetrical waltz. Mirror it, turn it or play it backwards, and see which guarantees carry over by theorem.",
+  "genre": "Strings",
+  "bpm": 84,
+  "n": 8,
+  "gap": 600,
+  "start": "symmetric",
+  "sections": [
+   {
+    "name": "Bloom",
+    "ops": [
+     {
+      "kind": "move",
+      "shape": "arc",
+      "counts": 12,
+      "title": "Move to Arc"
+     }
+    ]
+   },
+   {
+    "name": "Waltz",
+    "ops": [
+     {
+      "kind": "step",
+      "step": "balance",
+      "title": "Balancé"
+     },
+     {
+      "kind": "translate",
+      "dx": 0,
+      "dy": 400,
+      "counts": 8,
+      "title": "Drift Upstage"
+     },
+     {
+      "kind": "step",
+      "step": "chasse",
+      "title": "Chassé"
+     },
+     {
+      "kind": "translate",
+      "dx": 0,
+      "dy": -400,
+      "counts": 8,
+      "title": "Drift Back"
+     }
+    ]
+   },
+   {
+    "name": "Return",
+    "ops": [
+     {
+      "kind": "move",
+      "shape": "symmetric",
+      "counts": 12,
+      "title": "Back to Symmetry"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "the-orbit",
+  "title": "The Orbit",
+  "idea": "Geometric invariants",
+  "blurb": "Dancers circle in exact rings. Lean proves each one stays on their circle at every moment of the turn.",
+  "genre": "Cinematic",
+  "bpm": 96,
+  "n": 8,
+  "gap": 600,
+  "start": "circle",
+  "sections": [
+   {
+    "name": "First Orbit",
+    "ops": [
+     {
+      "kind": "rotate",
+      "quarters": 1,
+      "counts": 12,
+      "title": "Rotate 90°"
+     }
+    ]
+   },
+   {
+    "name": "Expand",
+    "ops": [
+     {
+      "kind": "move",
+      "shape": "wide circle",
+      "counts": 12,
+      "title": "Expand the Circle"
+     }
+    ]
+   },
+   {
+    "name": "Second Orbit",
+    "ops": [
+     {
+      "kind": "rotate",
+      "quarters": 2,
+      "counts": 12,
+      "title": "Rotate 180°"
+     }
+    ]
+   },
+   {
+    "name": "Close",
+    "ops": [
+     {
+      "kind": "move",
+      "shape": "circle",
+      "counts": 12,
+      "title": "Close the Circle"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "fracture-reunion",
+  "title": "Fracture / Reunion",
+  "idea": "Parallel composition",
+  "blurb": "An ensemble splits, each half dances its own shape at once, and they reunite. The groups are safe together because a line stays between them.",
+  "genre": "Bollywood fusion",
+  "bpm": 120,
+  "n": 12,
+  "gap": 600,
+  "start": "grid",
+  "sections": [
+   {
+    "name": "Ensemble",
+    "ops": [
+     {
+      "kind": "step",
+      "step": "thumka",
+      "title": "Thumka"
+     }
+    ]
+   },
+   {
+    "name": "Fracture",
+    "ops": [
+     {
+      "kind": "parallel",
+      "line": -300,
+      "leftShape": "circle",
+      "rightShape": "circle",
+      "counts": 16,
+      "title": "Left and Right Circle at Once"
+     }
+    ]
+   },
+   {
+    "name": "Apart",
+    "ops": [
+     {
+      "kind": "step",
+      "step": "jhatka",
+      "title": "Jhatka"
+     }
+    ]
+   },
+   {
+    "name": "Reunion",
+    "ops": [
+     {
+      "kind": "move",
+      "shape": "windows",
+      "counts": 16,
+      "title": "Reunite in Windows"
+     }
+    ]
+   }
+  ]
+ }
 ]

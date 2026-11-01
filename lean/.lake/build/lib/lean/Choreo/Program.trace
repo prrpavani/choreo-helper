@@ -1,13 +1,13 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["18d96fa61e4a8f57.olean"],
+ {"o": ["172c5ec8fd1e49e8.olean"],
   "m": false,
-  "i": "4d1c873e6ea8cf93.ilean",
-  "c": "7191298200b04645.c"},
+  "i": "31d841306630776e.ilean",
+  "c": "997573e5594c6196.c"},
  "log":
  [{"message":
-   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/lean/Choreo/Program.lean -o /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Program.olean -i /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Program.ilean -c /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Program.c --setup /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Program.setup.json --json",
+   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Program.lean -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Program.olean -i /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Program.ilean -c /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Program.c --setup /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Program.setup.json --json",
    "level": "trace"}],
  "inputs":
  [["deps",
@@ -16,7 +16,9 @@
      [["Choreo.Planner transitive imports (legacy)", "b7239b8e8ec63c57"],
       ["Choreo.Planner:importAllArts", "2576ade8d31ce19d"],
       ["Choreo.Language transitive imports (legacy)", "4656059468d61b28"],
-      ["Choreo.Language:importAllArts", "158748cda1ef3857"]]]]],
+      ["Choreo.Language:importAllArts", "158748cda1ef3857"],
+      ["Choreo.Composition transitive imports (legacy)", "eef05cd2c0bd522c"],
+      ["Choreo.Composition:importAllArts", "e0e47884886d0ab9"]]]]],
   ["libs",
    [["import dynlibs", "00000000000006bb"],
     ["package external libraries", "00000000000006bb"],
@@ -24,11 +26,11 @@
     ["module plugins", "00000000000006bb"]]],
   ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
    "407ce514b71d5a10"],
-  ["/Users/rrpavani/Documents/choreo-master/lean/Choreo/Program.lean",
-   "c34fd0db46ba46ec"],
+  ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Program.lean",
+   "15c1b352b45e1203"],
   ["options", "00000000000006bb"],
   ["isModule: false", "feefd2a0d3a1847e"],
   ["Module.name: Choreo.Program", "283a5fc030894acb"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "facf4b746977d276"}
+ "depHash": "0ff969e9b766b05a"}

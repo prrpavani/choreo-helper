@@ -2,6 +2,7 @@ import Choreo.Demo
 import Choreo.Recipes
 import Choreo.Tolerance
 import Choreo.Transforms
+import Choreo.Verification
 open Choreo Generated
 attribute [local instance] Lean.Grind.Semiring.natCast Lean.Grind.Ring.intCast
 
@@ -74,3 +75,6 @@ theorem Final.composition {K : Type} [Lean.Grind.Field K] [LE K] [LT K] [Std.Law
 
 /-- **A contract holds of the real trajectories.** If a step's contract is met, it runs safely and keeps its promise. -/
 theorem Final.step_contract {K : Type} [Lean.Grind.Field K] [LE K] [LT K] [Std.LawfulOrderLT K] [Std.IsLinearOrder K] [Lean.Grind.OrderedRing K] {st : Step} {c : Config} {a : State} (h : st.ok c a = true) : Triple K c (· = a) (.step st) (fun s' => s' = st.op.next c.n a ∧ st.ensures.holds s' = true) := Choreo.Step.triple h
+
+/-- **Inherited safety.** If a formation is collision-free, so is the formation after any routine of translations, rotations and reflections. -/
+theorem Final.routine_preserves_collision_freedom (ops : List Algebra.TOp) {n : Nat} {d2 : Rat} {F : Algebra.Formation} (hlen : F.length = n) (h : Algebra.CollisionFree n d2 F) : Algebra.CollisionFree n d2 (Algebra.Formation.map' (Algebra.applyAll ops) F) := Choreo.Algebra.routine_preserves_collision_freedom ops hlen h

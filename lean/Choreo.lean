@@ -8,3 +8,4 @@ import Choreo.Scene
 import Choreo.Recipes
 import Choreo.Transforms
 import Choreo.LanguageExamples
+import Choreo.Verification

@@ -35,7 +35,7 @@ type View = 'Plan' | 'Stage' | 'Theatre'
 interface Override { move: number; dancer: number; x: number; y: number }
 interface Snapshot { report: Report; kernel: KernelState; overrides: Override[]; scene: SceneData | null }
 
-const freshKernel = (): KernelState => ({ status: 'running', phases: 0, ms: 0, axioms: null, fingerprintMatch: null, errors: [], rejected: 0, parts: { movement: false }, contract: { steps: [], links: [], broken: [], composed: false, sameRoutine: false }, transitions: [] })
+const freshKernel = (): KernelState => ({ status: 'running', phases: 0, ms: 0, axioms: null, fingerprintMatch: null, errors: [], rejected: 0, parts: { movement: false }, contract: { steps: [], links: [], broken: [], composed: false, sameRoutine: false, algebra: [] }, transitions: [] })
 
 export function Workspace({ active, seed }: { active: boolean; seed: Seed | null }) {
   const [prompt, setPrompt] = useState('')

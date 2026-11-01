@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.lake/
+.cache/
+.DS_Store
