@@ -49,7 +49,7 @@ function runKernel(report, proofPath, send, onEnd, onChild) {
   const lean = spawn('lean', ['--json', proofPath], { cwd: leanDir, env: leanEnv })
   onChild(lean)
   let buf = ''
-  const st = { errors: [], axioms: null, fingerprint: null, verified: false, refuted: false, notProved: false, phases: 0, parts: { movement: false, forgiving: false }, contract: { steps: [], links: [], broken: [], composed: false, sameRoutine: false, algebra: [] }, transitions: [], timedOut: false }
+  const st = { errors: [], axioms: null, fingerprint: null, verified: false, refuted: false, notProved: false, phases: 0, parts: { movement: false, forgiving: false }, contract: { steps: [], links: [], broken: [], composed: false, sameRoutine: false, algebra: [], library: false, structural: false, witnesses: [] }, transitions: [], timedOut: false }
   // a check that never finishes is a technical failure, and says nothing about the routine
   const timer = setTimeout(() => { st.timedOut = true; lean.kill('SIGTERM') }, Number(process.env.LEAN_TIMEOUT_MS || 180000))
   const line = l => {
@@ -71,6 +71,9 @@ function runKernel(report, proofPath, send, onEnd, onChild) {
     else if (text.startsWith('STEP ')) { st.contract.steps.push(Number(text.slice(5))); send({ type: 'kernel', event: 'step', k: Number(text.slice(5)) }) }
     else if (text.startsWith('LINKBROKEN ')) { st.contract.broken.push(Number(text.slice(11))); send({ type: 'kernel', event: 'broken', k: Number(text.slice(11)) }) }
     else if (text.startsWith('LINK ')) st.contract.links.push(Number(text.slice(5)))
+    else if (text.startsWith('WITNESS ')) st.contract.witnesses.push(Number(text.slice(8)))
+    else if (text === 'STRUCTURAL') st.contract.structural = true
+    else if (text === 'LIBRARY') st.contract.library = true
     else if (text === 'COMPOSED') st.contract.composed = true
     else if (text === 'SAMEROUTINE') st.contract.sameRoutine = true
     else if (text === 'NOT_PROVED') st.notProved = true

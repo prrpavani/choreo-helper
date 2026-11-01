@@ -52,7 +52,7 @@ function Verdict({ report, kernel, first, onFocus, onUndo, canUndo, onReadProof,
   const total = report.phases.length
   const running = kernel.status === 'running'
   if (report.verdict === 'proved' && kernel.status === 'verified') return <div className="verdict good">
-    <h2>Proved.</h2><p>All the proofs hold at every moment.</p>
+    <h2>Proved.</h2><p>Proven, at every moment.</p>
     <button className="linkish" onClick={onReadProof}>See the proofs</button>
   </div>
   if (kernel.status === 'not_checked') {

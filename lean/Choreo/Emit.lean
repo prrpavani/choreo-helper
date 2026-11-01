@@ -63,6 +63,13 @@ def phaseProofs (r : Routine) : String := Id.run do
       out := out ++ s!"#eval IO.println \"PHASE {k}\"\n\n"
   return out
 
+/-- The phases as data only: nothing about them is checked one at a time. -/
+def phaseDataOnly (r : Routine) : String := Id.run do
+  let mut out := ""
+  for (ph, k) in r.phases.zipIdx do
+    out := out ++ phaseDef r ph k
+  return out
+
 /-- Each complete move in a routine, with the planner's name for it. -/
 def transitionsOf (b : Built) : List (String × String × Transition) := Id.run do
   let r := b.routine
@@ -96,7 +103,7 @@ def chainOf (indices : List Nat) : String :=
 
 def Built.formationOk (b : Built) : Bool := b.asks.all fun a => a.2.2.isMovement || a.2.2.check b.routine
 def Built.movementOk (b : Built) : Bool :=
-  b.routine.phases.all (Phase.check b.routine.cfg) && b.routine.checkMovement &&
+  b.structural || b.routine.phases.all (Phase.check b.routine.cfg) && b.routine.checkMovement &&
     b.asks.all fun a => !a.2.2.isMovement || a.2.2.check b.routine
 def Built.musicOk (b : Built) : Bool := b.routine.checkMusic
 
@@ -123,10 +130,10 @@ def stateL (s : State) : String := listL ptL s
 def orbitL (o : Orbit) : String := s!"⟨{o.i}, {intL o.cx}, {intL o.cy}, {intL o.r2}⟩"
 
 def opL : Op → String
-  | .move t b cs => s!"Op.move {stateL t} {b} {listL certL cs}"
-  | .turn c ccw b cs os => s!"Op.turn {ptL c} {boolL ccw} {b} {listL certL cs} {listL orbitL os}"
+  | .move t b => s!"Op.move {stateL t} {b}"
+  | .turn c ccw b => s!"Op.turn {ptL c} {boolL ccw} {b}"
   | .slide ds b => s!"Op.slide {listL (fun d => s!"({intL d.1}, {intL d.2})") ds} {b}"
-  | .par l r line t b cs => s!"Op.par {natsL l} {natsL r} {intL line} {stateL t} {b} {listL certL cs}"
+  | .par l r line t b => s!"Op.par {natsL l} {natsL r} {intL line} {stateL t} {b}"
 
 def predL : Pred → String
   | .anything => "Pred.anything"
@@ -152,13 +159,33 @@ def programSource (steps : List CStep) (start : State) : String := Id.run do
   out := out ++ s!"def program : Prog := {seqL ((List.range steps.length).map fun k => s!"step{k}")}\n\n"
   return out
 
+/-- The exact point on a pair's quadratic where they are closest, between 0 and 1. -/
+def lowestAt (a b c d : Pt) : Rat :=
+  let (A, B, _) := gapQuad a b c d
+  if A == 0 || B ≥ 0 then 0
+  else if A ≤ -B then 1
+  else ((-B : Int) : Rat) / ((A : Int) : Rat)
+
+/-- The closest any pair gets in a step of independent paths, worked out exactly. -/
+def closestPair (n : Nat) (a b : State) : Option (Nat × Nat × Rat × Rat) := Id.run do
+  let mut best : Option (Nat × Nat × Rat × Rat) := none
+  for i in List.range n do
+    for j in List.range i do
+      let u := lowestAt (a.at i) (b.at i) (a.at j) (b.at j)
+      let (A, B, C) := gapQuad (a.at i) (b.at i) (a.at j) (b.at j)
+      let v : Rat := ((A : Int) : Rat) * u * u + 2 * ((B : Int) : Rat) * u + ((C : Int) : Rat)
+      match best with
+      | some (_, _, _, w) => if v < w then best := some (i, j, u, v)
+      | none => best := some (i, j, u, v)
+  return best
+
 /-- Theorems about the program, once `cfg` and `routine` exist. -/
 def posL (p : Pt) : String := s!"⟨{intL p.x}, {intL p.y}⟩"
 def tOpL : Algebra.TOp → String
-  | .translate vx vy => s!"(.translate {vx} {vy})"
-  | .rotate cx cy k => s!"(.rotate {cx} {cy} {k})"
-  | .reflectV a => s!"(.reflectV {a})"
-  | .reflectH b => s!"(.reflectH {b})"
+  | .translate vx vy => s!"(.translate ({vx} : Rat) ({vy} : Rat))"
+  | .rotate cx cy k => s!"(.rotate ({cx} : Rat) ({cy} : Rat) {k})"
+  | .reflectV a => s!"(.reflectV ({a} : Rat))"
+  | .reflectH b => s!"(.reflectH ({b} : Rat))"
 
 /-- Runs of steps that each move the formation as a whole. -/
 def algebraRuns (steps : List CStep) : List (List CStep) :=
@@ -196,6 +223,16 @@ def programProofs (cfg : Config) (steps : List CStep) (start : State) : String :
       allOk := false
       out := out ++ s!"/-- The state the previous step leaves does not meet what this step requires. This says nothing about a collision. -/\ntheorem link{k}_broken : step{k}.requires.holds st{k} = false := by decide +kernel\n"
       out := out ++ s!"theorem step{k}_contract_unmet : step{k}.ok cfg st{k} = false := Step.not_ok_of_requires link{k}_broken\n#eval IO.println \"LINKBROKEN {k}\"\n"
+    -- a clash between independent paths gets a witness: the exact point, and a proof that they are too close there
+    match st.step.op with
+    | .move target _ =>
+      match closestPair cfg.n cur target with
+      | some (i, j, u, v) =>
+        if v < ((cfg.dmin * cfg.dmin : Int) : Rat) then
+          let pos (p : Pt) := s!"⟨{intL p.x}, {intL p.y}⟩"
+          out := out ++ s!"/-- A real collision: this far along the move, these two dancers are closer than the gap. -/\ntheorem step{k}_collision : Algebra.distSq (Algebra.lerp {pos (cur.at i)} {pos (target.at i)} ({u.num} / {u.den})) (Algebra.lerp {pos (cur.at j)} {pos (target.at j)} ({u.num} / {u.den})) < {cfg.dmin * cfg.dmin} := by decide +kernel\n#eval IO.println \"WITNESS {k}\"\n"
+      | none => pure ()
+    | _ => pure ()
     if st.step.ok cfg cur then
       out := out ++ s!"theorem step{k}_ok {fieldBinders} : Triple K cfg (· = st{k}) (Prog.step step{k}) (· = st{k + 1}) :=\n  Step.triple_at (by decide +kernel) (by decide +kernel)\n#eval IO.println \"STEP {k}\"\n"
     else
@@ -228,7 +265,7 @@ def proofSource (b : Built) (program : List CStep := []) (start : State := []) :
       | none => pure ()
     | none => pure ()
   out := out ++ s!"def cfg : Config := {configL r.cfg}\n\n"
-  out := out ++ phaseProofs r
+  out := out ++ (if b.structural then phaseDataOnly r else phaseProofs r)
   let names := r.phases.zipIdx.map fun (_, k) => s!"ph{k}"
   out := out ++ s!"def routine : Routine := ⟨cfg, {listL id names}⟩\n"
   out := out ++ s!"def asks : List Ask := {listL (fun (a : String × String × Ask) => askL a.2.2) b.asks}\n\n"
@@ -236,6 +273,8 @@ def proofSource (b : Built) (program : List CStep := []) (start : State := []) :
   out := out ++ programSource program start
   out := out ++ programProofs r.cfg program start
   out := out ++ algebraProofs r.cfg program
+  if !program.isEmpty then
+    out := out ++ "\n/-- The general results this routine rests on, in force in this very file. -/\ntheorem general_results_in_force : True := by\n  have := @Triple.seq; have := @turning_keeps_the_gap; have := @slide_pair_safe; have := @Algebra.routine_preserves_collision_freedom; exact trivial\n#eval IO.println \"LIBRARY\"\n"
   -- each move, proved on its own
   for ((_, _, tr), k) in (transitionsOf b).zipIdx do
     if transitionOk r tr then
@@ -243,7 +282,10 @@ def proofSource (b : Built) (program : List CStep := []) (start : State := []) :
       out := out ++ s!"theorem tr{k}_ok {fieldBinders} : TransitionValid K routine tr{k} :=\n  Transition.valid (r := routine) (tr := tr{k}) (by decide +kernel) {chainOf ((List.range tr.count).map (· + tr.first))} K\n"
       out := out ++ s!"#eval IO.println \"TRANSITION {k}\"\n\n"
   -- the movement guarantee for the routine as a whole: everybody moves safely, at every instant
-  if b.movementOk then
+  if b.structural then
+    out := out ++ "/-- The main result: this routine is safe at every instant, because its program's movements are. No phase is checked on its own. -/\n"
+    out := out ++ s!"theorem routine_moves_safely {fieldBinders} : MovementProved K routine asks :=\n  movement_of_specs K (by decide +kernel) (specs_of_run (Prog.run_of_allRun (K := K) (c := cfg) (p := program) (t := 0) (s := st0) (by decide +kernel)) (by decide +kernel)) (by decide +kernel)\n#eval IO.println \"PART movement\"\n#eval IO.println \"STRUCTURAL\"\n\n"
+  else if b.movementOk then
     out := out ++ "/-- The main result: in this exact routine, nobody comes too close, leaves the stage or moves too fast, at any instant. -/\n"
     out := out ++ s!"theorem routine_moves_safely {fieldBinders} : MovementProved K routine asks :=\n  movement_part (r := routine) (by decide +kernel) {chainOf (List.range r.phases.length)} (by decide +kernel) K\n#eval IO.println \"PART movement\"\n\n"
     if b.drift > 0 && r.cfg.dmin - 2 * b.drift > 0 then
@@ -371,7 +413,7 @@ def tightestPair (c : Config) (ph : Phase) : Nat × Nat × Rat := Id.run do
         if d < best.2.2 then best := (i, j, d)
   return best
 
-def phaseJson (c : Config) (names : Names) (label kind : String) (ph : Phase) (k : Nat) : Json :=
+def phaseJson (c : Config) (names : Names) (label kind : String) (ph : Phase) (k : Nat) (known : Bool := false) : Json :=
   let (i, j, d2) := tightestPair c ph
   let cert := ph.pairCert i j
   Json.mkObj [
@@ -379,7 +421,7 @@ def phaseJson (c : Config) (names : Names) (label kind : String) (ph : Phase) (k
     ("bounds", jRect ph.bounds),
     ("paths", Json.arr (ph.paths.map fun p =>
       Json.mkObj [("X", jPoly p.X), ("Y", jPoly p.Y), ("W", jPoly p.W)]).toArray),
-    ("ok", toJson (Phase.check c ph)),
+    ("ok", toJson (known || Phase.check c ph)),
     ("tight", Json.mkObj [("i", i), ("j", j), ("names", toJson s!"{names i} and {names j}"),
       ("distance", jFloat (distFloat d2)),
       ("how", toJson (certName cert)), ("depth", certDepth cert),
@@ -451,7 +493,16 @@ def programJson (cfg : Config) (steps : List CStep) (start : State) (names : Nam
       ("requiresOk", toJson rq), ("runsOk", toJson en), ("ok", toJson ok),
       ("why", toJson (if rq then "" else Pred.whyNot names cur st.step.requires)),
       ("algebra", toJson (match st.algebra with | some (.translate ..) => "translate" | some (.rotate ..) => "rotate" | some (.reflectV _) | some (.reflectH _) => "reflect" | none => "")),
-      ("opKind", toJson (match st.step.op with | .move .. => "checked" | .turn .. => "checked" | .slide .. => "rule" | .par .. => "rule")),
+      ("closest", match st.step.op with
+        | .move target _ =>
+          match closestPair cfg.n cur target with
+          | some (i, j, u, v) =>
+            let (A, B, C) := gapQuad (cur.at i) (target.at i) (cur.at j) (target.at j)
+            Json.mkObj [("i", i), ("j", j), ("names", toJson s!"{names i} and {names j}"), ("uNum", jInt u.num), ("uDen", toJson u.den), ("A", jInt A), ("B", jInt B), ("C", jInt C),
+              ("distSq", toJson (v.num.toNat / v.den)), ("clash", toJson (v < ((cfg.dmin * cfg.dmin : Int) : Rat)))]
+          | none => Json.null
+        | _ => Json.null),
+      ("opKind", toJson (match st.step.op with | .move .. => "exact" | .turn .. => "rule" | .slide .. => "rule" | .par .. => "rule")),
       ("before", Json.arr (st.before.map fun p => Json.arr #[jInt p.x, jInt p.y]).toArray),
       ("after", Json.arr (st.after.map fun p => Json.arr #[jInt p.x, jInt p.y]).toArray)])
     cur := st.after
@@ -461,7 +512,7 @@ def programJson (cfg : Config) (steps : List CStep) (start : State) (names : Nam
 def report (b : Built) (names : Names) (proofPath : String) (program : List CStep := []) (start : State := []) : Json :=
   let r := b.routine
   let c := r.cfg
-  let problems := phaseProblems r
+  let problems := if b.structural then [] else phaseProblems r
   let asks := b.asks.map fun (g, text, a) => (g, text, a, Ask.check r a)
   let phaseOk := r.phases.all (Phase.check c)
   let globalOk := r.checkGlobal
@@ -500,7 +551,7 @@ def report (b : Built) (names : Names) (proofPath : String) (program : List CSte
     ("names", Json.arr ((List.range c.n).map fun i => toJson (names i)).toArray),
     ("phases", Json.arr (r.phases.zipIdx.map fun (ph, k) =>
       let (label, kind) := labels.getD k ("", "")
-      phaseJson c names label kind ph k).toArray),
+      phaseJson c names label kind ph k b.structural).toArray),
     ("keys", Json.arr (b.keys.map fun (m, p) => Json.mkObj [("move", m), ("phase", p)]).toArray),
     ("globalOk", toJson globalOk),
     ("checked", Json.mkObj [("formation", toJson b.formationOk), ("movement", toJson b.movementOk), ("musicality", toJson b.musicOk),

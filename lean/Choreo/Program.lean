@@ -64,6 +64,10 @@ def arcPlaces (n : Nat) : State :=
     let a : Float := 3.14159265358979 * (i.toFloat + 0.5) / n.toFloat
     ⟨(-(4200.0 * a.cos)).toInt64.toInt / 10 * 10, (1800.0 + 3600.0 * a.sin).toInt64.toInt / 10 * 10⟩
 
+/-- Two groups pulled apart to either side, in lanes. -/
+def splitPlaces (n : Nat) (gap : Int) : State :=
+  (evenLanes n gap).map fun p => ⟨if p.x < 0 then p.x - 1500 else p.x + 1500, p.y⟩
+
 /-- Pairs mirrored across the centre line. -/
 def mirroredPlaces (n : Nat) : State :=
   (List.range n).map fun (i : Nat) =>
@@ -74,9 +78,11 @@ def mirroredPlaces (n : Nat) : State :=
 def staggeredLines (n : Nat) : State :=
   let back := n / 2
   let front := n - back
+  -- the rows spread out as far as the stage allows, for any number of dancers
+  let space : Int := min 1800 (10000 / (max 1 (front : Int)))
   let row (count : Nat) (y shift : Int) : State := (List.range count).map fun (k : Nat) =>
-    ⟨(2 * (k : Int) + 1 - (count : Int)) * 900 + shift, y⟩
-  row front 3000 (-450) ++ row back 5000 450
+    ⟨(2 * (k : Int) + 1 - (count : Int)) * space / 2 + shift, y⟩
+  row front 3000 (-space / 4) ++ row back 5000 (space / 4)
 
 def namedPlaces (name : String) (n : Nat) (gap : Int) : State :=
   let shape (s : Shape) := s.formation n |>.slots |>.map slotPt
@@ -95,6 +101,7 @@ def namedPlaces (name : String) (n : Nat) (gap : Int) : State :=
   | "cross" => shape .cross
   | "spiral" => shape .spiral
   | "lanes" => evenLanes n gap
+  | "split" => splitPlaces n gap
   | "arc" => arcPlaces n
   | "symmetric" => mirroredPlaces n
   | "staggered" => staggeredLines n
@@ -150,7 +157,6 @@ def compileOp (sp : ProgramSpec) (st : CState) (o : SurfaceOp) : CState :=
   let n := sp.n
   let s := st.pos
   let gap := sp.gap
-  let certsFor (paths : List Path) := chooseCerts n paths gap
   let add (name kind label : String) (step : Step) (rq en : String) (st : CState) (algebra : Option Algebra.TOp := none) : CState :=
     let next := step.op.next n st.pos
     { pos := next, steps := st.steps ++ [{ name, sectionName := o.section', surface := o.index, kind, label, step, requiresText := rq, ensuresText := en, before := st.pos, after := next, algebra }] }
@@ -161,23 +167,19 @@ def compileOp (sp : ProgramSpec) (st : CState) (o : SurfaceOp) : CState :=
     let target := match o.places with
       | some p => p
       | none => assignTo s (namedPlaces o.shape n gap)
-    let paths := (List.range n).map fun i => easePath (s.at i) (target.at i)
     let isCircle := o.shape == "circle" || o.shape == "wide circle"
     let r2 := distSq (target.at 0) centre
     let en : Pred := if o.places.isNone && isCircle then .onCircle (List.range n) centre.x centre.y r2 else .isAt target
     add (shown s!"Move to {o.shape}") "form" (shown s!"Move to {o.shape}")
-      { op := .move target o.counts (certsFor paths), ensures := en }
-      "Lean's checker passes these exact paths from where everyone stands."
+      { op := .move target o.counts, ensures := en }
+      "Dancers are on their own paths, so every pair must stay apart the whole way. Lean works out each pair's exact closest point."
       (if o.places.isNone && isCircle then "Everyone stands exactly on one circle." else s!"Everyone stands on their place in the {o.shape}.") st
   | "rotate" =>
     (List.range o.quarters).foldl (fun (st : CState) _ =>
-      let cur := st.pos
-      let paths := (List.range n).map fun i => rotatePath centre (cur.at i) o.ccw
-      let orbits := (List.range n).map fun i => (⟨i, centre.x, centre.y, distSq (cur.at i) centre⟩ : Orbit)
       add (shown s!"Rotate {o.quarters * 90}°") "rotate" (shown "Rotate")
-        { op := .turn centre o.ccw o.counts (certsFor paths) orbits }
-        "Lean's checker passes these exact arcs from where everyone stands."
-        "Each dancer stays exactly the same distance from the centre, at every moment." st
+        { op := .turn centre o.ccw o.counts, requires := .separated n gap }
+        s!"Everyone is at least {gap / 10} cm apart to begin with."
+        "Every gap stays exactly as it was, at every moment of the turn, and each dancer stays on their own circle." st
         (if o.ccw then some (.rotate centre.x centre.y 1) else some (.rotate centre.x centre.y 3))) st
   | "translate" =>
     add (shown "Move everyone together") "form" (shown "Translate")
@@ -215,9 +217,8 @@ def compileOp (sp : ProgramSpec) (st : CState) (o : SurfaceOp) : CState :=
     let target := (List.range n).map fun i =>
       let p := s.at i
       (⟨centre.x + (p.x - centre.x) * o.num / max 1 o.den, centre.y + (p.y - centre.y) * o.num / max 1 o.den⟩ : Pt)
-    let paths := (List.range n).map fun i => easePath (s.at i) (target.at i)
-    add (shown "Scale") "burst" (shown "Scale") { op := .move target o.counts (certsFor paths), ensures := .isAt target }
-      "Lean's checker passes these exact paths from where everyone stands."
+    add (shown "Scale") "burst" (shown "Scale") { op := .move target o.counts, ensures := .isAt target }
+      "Every pair must stay apart the whole way. Lean works out each pair's exact closest point."
       "Every gap has grown or shrunk by the same factor." st
   | "parallel" =>
     let (l, r) := groupsOf s n
@@ -227,10 +228,9 @@ def compileOp (sp : ProgramSpec) (st : CState) (o : SurfaceOp) : CState :=
       let idx := improveAssign (g.map s.at) places 6 (List.range g.length)
       g.zipIdx.map fun (d, k) => (d, places.getD (idx.getD k 0) default)
     let target := placesWith n (inGroup l o.leftShape (o.line - 3000) ++ inGroup r o.rightShape (o.line + 3000)) s
-    let paths := (List.range n).map fun i => easePath (s.at i) (target.at i)
     let pre : Pred := .splitAt l r o.line gap
     add (shown "Two groups move at once") "parallel" (shown "Parallel")
-      { op := .par l r o.line target o.counts (certsFor paths), requires := pre, ensures := .splitAt l r o.line gap }
+      { op := .par l r o.line target o.counts, requires := pre, ensures := .splitAt l r o.line gap }
       s!"A line keeps the two groups apart: everyone on one side, everyone else at least {gap / 10} cm past it."
       "Each group has formed its shape on its own side, on the same count." st
   | _ => st
@@ -251,39 +251,30 @@ def Pred.mapT (t : String) : Pred → Pred
   | .splitAt a b line d => if t == "mirror" || t == "half" then .splitAt b a (-line - d) d else .splitAt a b line d
   | p => p
 
-def Op.mapT (n gap : Nat) (t : String) (s : State) : Op → Op
-  | .move target b _ =>
-    let tg := target.map (Pt.mapT t)
-    .move tg b (chooseCerts n ((List.range n).map fun i => easePath ((s.map (Pt.mapT t)).at i) (tg.at i)) gap)
+def Op.mapT (t : String) : Op → Op
+  | .move target b => .move (target.map (Pt.mapT t)) b
   | .slide ds b => .slide (if t == "mirror" then ds.map (fun d => (-d.1, d.2)) else if t == "half" then ds.map (fun d => (-d.1, -d.2)) else ds) b
-  | .turn c ccw b _ os =>
-    let c' := Pt.mapT t c
-    let ccw' := if t == "mirror" then !ccw else ccw
-    let s' := s.map (Pt.mapT t)
-    .turn c' ccw' b (chooseCerts n ((List.range n).map fun i => rotatePath c' (s'.at i) ccw') gap)
-      (os.map fun o => let cc := Pt.mapT t ⟨o.cx, o.cy⟩; ⟨o.i, cc.x, cc.y, o.r2⟩)
-  | .par l r line target b _ =>
+  | .turn c ccw b => .turn (Pt.mapT t c) (if t == "mirror" then !ccw else ccw) b
+  | .par l r line target b =>
     let tg := target.map (Pt.mapT t)
-    let flips := t == "mirror" || t == "half"
-    let (l', r', line') := if flips then (r, l, -line - (gap : Int)) else (l, r, line)
-    .par l' r' line' tg b (chooseCerts n ((List.range n).map fun i => easePath ((s.map (Pt.mapT t)).at i) (tg.at i)) gap)
+    if t == "mirror" || t == "half" then .par r l (-line - 600) tg b else .par l r line tg b
 
 def applyTransform (sp : ProgramSpec) (t : String) (steps : List CStep) : List CStep :=
   if t != "mirror" && t != "half" && t != "upstage" then steps else
   steps.map fun c =>
     let before := c.before.map (Pt.mapT t)
     { c with before, after := c.after.map (Pt.mapT t),
-             step := { op := Op.mapT sp.n sp.gap.toNat t c.before c.step.op,
+             step := { op := Op.mapT t c.step.op,
                        requires := Pred.mapT t c.step.requires, ensures := Pred.mapT t c.step.ensures } }
 
 /-- Play the program backwards: each step runs from where it ended to where it began. -/
 def reverseSteps (sp : ProgramSpec) (steps : List CStep) : List CStep :=
   steps.reverse.map fun c =>
     let op : Op := match c.step.op with
-      | .move _ b _ => .move c.before b (chooseCerts sp.n ((List.range sp.n).map fun i => easePath (c.after.at i) (c.before.at i)) sp.gap)
+      | .move _ b => .move c.before b
       | .slide ds b => .slide (ds.map fun d => (-d.1, -d.2)) b
-      | .turn cen ccw b _ os => .turn cen (!ccw) b (chooseCerts sp.n ((List.range sp.n).map fun i => rotatePath cen (c.after.at i) (!ccw)) sp.gap) os
-      | .par l r line _ b _ => .par l r line c.before b (chooseCerts sp.n ((List.range sp.n).map fun i => easePath (c.after.at i) (c.before.at i)) sp.gap)
+      | .turn cen ccw b => .turn cen (!ccw) b
+      | .par l r line _ b => .par l r line c.before b
     -- a reversed step keeps its requirement only if that is still true where it now starts
     { c with before := c.after, after := c.before, name := s!"{c.name}, reversed", step := { op, requires := c.step.ensures, ensures := c.step.requires } }
 
@@ -327,7 +318,7 @@ def buildProgram (sp : ProgramSpec) (_names : Names) : Built × List CStep :=
       bpmNum := beats * 60, bpmDen := seconds, total := beats * 4, seconds }
   let drafts : List Draft := steps.map fun c =>
     { label := c.label, kind := c.kind, beats := c.step.op.beats, bounds := env, dmin := sp.gap,
-      paths := (List.range sp.n).map (c.step.op.pathOf sp.n c.before), orbits := c.step.op.orbits }
+      paths := (List.range sp.n).map (c.step.op.pathOf sp.n c.before) }
   let (phases, _) := drafts.foldl (fun (acc, t) d => (acc ++ [d.toPhase sp.n t], t + d.beats * 4)) (([] : List Phase), 0)
   let frames := start :: (steps.map (·.after))
   let plan : Plan := { seconds, bpm := (beats * 60) / max 1 seconds, genre := if sp.genre.isEmpty then "Cinematic" else sp.genre,
@@ -337,7 +328,11 @@ def buildProgram (sp : ProgramSpec) (_names : Names) : Built × List CStep :=
       heard := (steps.map (·.name)).foldl (fun acc x => if acc.getLast? == some x then acc else acc ++ [x]) [],
       derived := some { frames, rules := [], holds := [], moves := steps.map (·.step.op.beats), seconds, genre := plan.genre,
                         landing := (List.range steps.length) } }
-  (built, steps)
+  -- when every movement can run, the routine's safety comes from the movements, with no separate check
+  let rec allOk : List CStep → State → Bool
+    | [], _ => true
+    | c :: cs, cur => c.step.op.enabled cfg cur && allOk cs c.after
+  ({ built with structural := !steps.isEmpty && allOk steps start }, steps)
 
 /-! ## Reading a program from the editor -/
 

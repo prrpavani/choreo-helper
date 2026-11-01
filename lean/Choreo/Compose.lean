@@ -126,16 +126,15 @@ section Proofs
 variable {K : Type} [Field K] [LE K] [LT K] [LawfulOrderLT K] [IsLinearOrder K] [OrderedRing K]
 attribute [local instance] Semiring.natCast Ring.intCast
 
-/-- **The movement part.** The phase proofs, the joins and the stage requests give the movement guarantee. -/
-theorem movement_part {r : Routine} {asks : List Ask} (hm : r.checkMovement = true) (hp : AllChecked r.cfg r.phases)
-    (ha : asks.all (fun a => !a.isMovement || a.check r) = true)
-    (K : Type) [Field K] [LE K] [LT K] [LawfulOrderLT K] [IsLinearOrder K] [OrderedRing K] :
+/-- **From safe phases to a safe routine.** However the phases are known to be safe, that fact, the joins
+    and the timeline give the guarantee over the whole routine. -/
+theorem movement_of_specs {r : Routine} {asks : List Ask} (K : Type) [Field K] [LE K] [LT K] [LawfulOrderLT K] [IsLinearOrder K] [OrderedRing K]
+    (hm : r.checkMovement = true) (hspec : ∀ ph, ph ∈ r.phases → PhaseSpec K r.cfg ph)
+    (ha : asks.all (fun a => !a.isMovement || a.check r) = true) :
     MovementProved K r asks := by
   simp only [Routine.checkMovement, Bool.and_eq_true, Bool.not_eq_true', List.isEmpty_eq_false_iff,
     List.all_eq_true] at hm
   obtain ⟨⟨⟨⟨hwf, hne⟩, hchain⟩, hjoin⟩, hwithin⟩ := hm
-  have hspec : ∀ ph, ph ∈ r.phases → PhaseSpec K r.cfg ph :=
-    fun ph hmem => Phase.sound (allChecked_mem hp ph hmem) K
   have hlt := chain_lt r.phases 0 r.cfg.total hchain
   have cover : ∀ T : K, 0 ≤ T → T ≤ ((r.cfg.total : Int) : K) → ∃ ph, ph ∈ r.phases ∧ Phase.Active ph T := by
     intro T h0 h1
@@ -171,6 +170,13 @@ theorem movement_part {r : Routine} {asks : List Ask} (hm : r.checkMovement = tr
     cases ha a hmem with
     | inl h => simp [hmove] at h
     | inr h => exact Ask.sound (fun _ => hspec) h
+
+/-- **The movement part.** The phase proofs, the joins and the stage requests give the movement guarantee. -/
+theorem movement_part {r : Routine} {asks : List Ask} (hm : r.checkMovement = true) (hp : AllChecked r.cfg r.phases)
+    (ha : asks.all (fun a => !a.isMovement || a.check r) = true)
+    (K : Type) [Field K] [LE K] [LT K] [LawfulOrderLT K] [IsLinearOrder K] [OrderedRing K] :
+    MovementProved K r asks :=
+  movement_of_specs K hm (fun ph hmem => Phase.sound (allChecked_mem hp ph hmem) K) ha
 
 /-- **The musicality part.** -/
 theorem musicality_part {r : Routine} (h : r.checkMusic = true) : MusicalityProved r := by

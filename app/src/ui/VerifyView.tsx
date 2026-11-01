@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ProgramDef, ProgramReport, STATUS_WORD, Status, TRANSFORMS, stepStatus, linkStatus } from '../lib/program'
+import { BRIDGE, ProgramDef, ProgramReport, STATUS_WORD, Status, TRANSFORMS, flatOps, stepStatus, linkStatus } from '../lib/program'
 import { Report, fmtTime } from '../lib/routine'
 import { KernelState } from './ProofRail'
 import { Dot } from './Sequence'
@@ -30,40 +30,55 @@ export function VerifyView({ program, programReport, report, kernel, transform, 
   const brokenSteps = steps.filter(s => linkStatus(kernel, s) === 'broken')
   const comp: Obligation[] = program ? [
     ...brokenSteps.map(s => ({ id: `broken${s.index}`, name: `${s.name} can't follow what comes before it`, text: `${s.why}. This is a broken relationship between two movements. It is not a claim that anyone collides: that is judged separately, below.`, status: 'broken' as Status, theorem: `link${s.index}_broken` })),
-    { id: 'seq', name: 'The composition rule', text: 'If a movement takes P to Q, and the next takes Q to R, then the two together take P to R. This is proved once, for any movements.', status: 'proved', theorem: 'Triple.seq' },
+    { id: 'seq', name: 'The composition rule', text: 'If a movement takes P to Q, and the next takes Q to R, then the two together take P to R. This is proved once, for any movements.', status: (kernel.contract?.library ? 'proved' : running ? 'running' : stale ? 'pending' : failed ? 'error' : 'unknown') as Status, theorem: 'Triple.seq' },
     { id: 'composed', name: 'The whole program', text: kernel.contract?.composed ? 'Each guarantee met the next requirement, so the composition rule applies all the way along, and the whole program holds.' : brokenSteps.length ? 'The chain is broken, so this theorem does not exist for this version.' : 'This theorem does not exist yet for this version.', status: kernel.contract?.composed ? 'proved' : running ? 'running' : stale ? 'pending' : failed ? 'error' : brokenSteps.length ? 'broken' : 'unknown', theorem: 'program_ok' },
     { id: 'same', name: 'The program is what plays', text: 'The phases this program produces are exactly the phases of the routine on stage: same times, same paths.', status: kernel.contract?.sameRoutine ? 'proved' : running ? 'running' : stale ? 'pending' : 'unknown', theorem: 'program_plays_this_routine' },
   ] : []
   const runs = programReport?.runs ?? []
   const inherited: Obligation[] = runs.length ? [
-    { id: 'isometry', name: 'Isometries keep collision freedom', text: 'Translations, rotations and reflections never change a distance. So one that starts collision-free stays collision-free, for any formation.', status: 'proved', theorem: 'isometry_preserves_collision_freedom' },
-    { id: 'routine', name: 'So does any routine of them', text: 'However long the routine and in whatever order. Long routines are built from these operations without proving anything again.', status: 'proved', theorem: 'routine_preserves_collision_freedom' },
+    { id: 'isometry', name: 'Isometries keep collision freedom', text: 'Translations, rotations and reflections never change a distance. So one that starts collision-free stays collision-free, for any formation.', status: (kernel.contract?.library ? 'proved' : running ? 'running' : stale ? 'pending' : failed ? 'error' : 'unknown') as Status, theorem: 'isometry_preserves_collision_freedom' },
+    { id: 'routine', name: 'So does any routine of them', text: 'However long the routine and in whatever order. Long routines are built from these operations without proving anything again.', status: (kernel.contract?.library ? 'proved' : running ? 'running' : stale ? 'pending' : failed ? 'error' : 'unknown') as Status, theorem: 'routine_preserves_collision_freedom' },
     ...runs.map((r, k) => ({ id: `run${k}`, name: r.names.length > 3 ? `${r.names[0]} … ${r.names[r.names.length - 1]}` : r.names.join(', then '), text: `Lean checks the ${programReport!.pairs} pairs in the starting formation, once. Because each of these ${r.steps} operations keeps every distance, every later formation is collision-free. No moment of the animation is sampled.`, status: (kernel.contract?.algebra?.includes(k) ? 'proved' : running ? 'running' : stale ? 'pending' : failed ? 'error' : 'unknown') as Status, theorem: `run${k}_valid` })),
   ] : []
+  const exact: Obligation[] = steps.filter(s => s.closest).map(s => { const c = s.closest!, st = stepStatus(kernel, s), witness = kernel.contract?.witnesses?.includes(s.index), cm = Math.round(Math.sqrt(Math.max(0, c.distSq)) / 10)
+    return { id: `exact${s.index}`, name: s.name, text: witness ? `${c.names} get too close: ${cm} cm at exactly ${c.uNum}/${c.uDen} of the way through this move. The limit is ${report.config.dmin / 10} cm. This is a concrete collision, proved by Lean.` : `Every pair stays apart for the whole move. The closest is ${c.names}: ${cm} cm, ${Math.round(c.uNum / c.uDen * 100)}% of the way through. Each pair's squared distance is a parabola, and Lean finds its exact lowest point. No frames are sampled.`, status: (witness ? 'refuted' : st === 'broken' ? 'proved' : st) as Status, theorem: witness ? `step${s.index}_collision` : 'linear_pair_safe', assumptions: 'Each dancer walks a straight line from where they stand to their place. Dancers are points.' } })
   const safe = kernel.status === 'verified', move: Status = safe ? 'proved' : running ? 'running' : stale ? 'pending' : failed ? 'error' : kernel.status === 'refuted' ? 'refuted' : 'unknown'
   const has = (k: string) => report.problems.some(p => p.kind === k), rule = (k: string[]): Status => (move === 'refuted' || move === 'unknown') && !k.some(has) ? (safe ? 'proved' : 'unknown') : move
   const first = report.problems.find(p => p.second !== undefined)
   const geo: Obligation[] = [
     { id: 'gap', name: 'No collisions', text: first && kernel.status === 'refuted' ? `${first.text}, at ${fmtTime(first.second!, true)}. Lean holds a theorem that this routine is unsafe, from this exact moment.` : `No two dancers are closer than ${report.config.dmin / 10} cm, at any moment. Dancers are points that must keep a gap.`, status: rule(['collision', 'unproved']), theorem: kernel.status === 'refuted' ? 'routine_is_unsafe' : 'PhaseSpec' },
-    { id: 'bounds', name: 'Stays in bounds', text: 'Everyone stays on the stage or in the wings.', status: rule(['offstage']), theorem: 'inRect_sound' },
+    { id: 'bounds', name: 'Stays in bounds', text: 'Everyone stays on the stage or in the wings.', status: rule(['offstage']), theorem: 'inRect_sound', assumptions: 'Translation and rotation do not keep this automatically, so Lean checks each dancer\'s path against the edges.' },
     { id: 'speed', name: 'Under the speed limit', text: `Nobody moves faster than ${(report.config.vmax / 1000).toFixed(1)} m/s. If this fails, give the movement more counts.`, status: rule(['fast']), theorem: 'speed_sound' },
     { id: 'joins', name: 'No jumps', text: 'Each movement starts where the last ended, at the same speed.', status: report.checked?.movementJoins === false ? 'unknown' : move === 'refuted' ? 'proved' : move, theorem: 'joinPath_sound' },
-    ...(program?.id === 'the-orbit' ? [{ id: 'orbit', name: 'Each dancer stays on their circle', text: 'While rotating, every dancer stays exactly the same distance from the centre, at every moment, not just at the start and end.', status: move, theorem: 'orbit_sound' }] : []),
-    ...(program?.id === 'fracture-reunion' ? [{ id: 'par', name: 'Groups kept apart by a line', text: 'If one dancer stays on one side of a line and another stays far enough past it, they can never meet. So the two groups need no checks across them.', status: 'proved' as Status, theorem: 'par_pair_safe' }] : []),
+    ...(program?.id === 'the-orbit' ? [{ id: 'orbit', name: 'Each dancer stays on their circle', text: 'While rotating, every dancer stays exactly the same distance from the centre, at every moment, not just at the start and end.', status: (kernel.contract?.library ? 'proved' : running ? 'running' : stale ? 'pending' : failed ? 'error' : 'unknown') as Status, theorem: 'turn_stays_on_circle' }] : []),
+    ...(program?.id === 'fracture-reunion' ? [{ id: 'par', name: 'Groups kept apart by a line', text: 'If one dancer stays on one side of a line and another stays far enough past it, they can never meet. So the two groups need no checks across them.', status: move, theorem: 'par_pair_safe' }] : []),
   ]
   const tf = TRANSFORMS.find(t => t.key === transform)
   return <div className="verify" role="region" aria-label="Verification">
-    <header className="vf-head"><div><div className="eyebrow">Verification</div><h2>{running ? 'Lean is checking' : stale ? 'Not checked yet' : safe && (!program || kernel.contract?.composed) ? 'Everything here is proved' : brokenSteps.length && safe ? 'Safe, but the program doesn\'t hold together' : brokenSteps.length ? 'Broken contract, and a real collision' : kernel.status === 'refuted' ? 'Proved unsafe' : failed ? 'No verdict' : 'Not proved'}</h2>
+    <header className="vf-head"><div><div className="eyebrow">Verification</div><h2>{running ? 'Lean is checking' : stale ? 'Not checked yet' : safe && (!program || kernel.contract?.composed) ? 'Everything here is proved' : brokenSteps.length && safe ? 'Safe, but the program doesn\'t hold together' : brokenSteps.length ? 'Broken contract, and a real collision' : kernel.status === 'refuted' ? 'Disproven' : 'Unknown'}</h2>
       <p className="ob-sub">About the modelled choreography and the assumptions stated. {kernel.ms ? `Checked in ${(kernel.ms / 1000).toFixed(1)} s.` : ''} {kernel.axioms ? `Rests on Lean's kernel and ${kernel.axioms.join(', ')}.` : ''}</p></div>
       <button className="btn primary sm" disabled={running} onClick={onGenerate}>{running ? 'Checking…' : 'Generate Lean proof'}</button></header>
+    {program && <section className="vf-story" aria-label="How the guarantee is built">
+      <h3>How this routine is known to be safe</h3>
+      <ol className="vf-chain"><li className="vf-start"><span>Start</span><b>{program.n} dancers</b><em>Each pair checked once</em></li>
+        {flatOps(program).map(({ op }, i) => { const b = BRIDGE[op.kind]; return <li key={i} className={`how-${b?.how ?? 'exact'}`}><span>{op.title ?? op.kind}</span><em>{b?.how === 'inherited' ? 'Inherited' : b?.how === 'rule' ? 'By a rule' : 'Exact analysis'}</em></li> })}</ol>
+      <p className="ob-sub">{(() => { const ops = flatOps(program), inh = ops.filter(o => BRIDGE[o.op.kind]?.how !== 'exact').length; return inh === ops.length ? `Every movement here follows from a theorem or a simple rule. Lean looks at each pair of dancers once, at the start, and no moment of the animation is sampled. The result holds for ${program.n} dancers because it holds for any number.` : `${inh} of ${ops.length} movements follow from a theorem or a rule. The others have dancers on their own paths, where collisions are possible, so Lean finds the exact closest point of each pair. That covers every instant, not sampled frames.` })()}</p>
+    </section>}
+    <section className="vf-assume" aria-label="Assumptions"><h3>What this assumes</h3><ul>
+      <li>Dancers are points that must keep at least {report.config.dmin / 10} cm between their centres. Arms, costumes and bodies aren't modelled.</li>
+      <li>The stage and wings are a rectangle, {(report.config.envelope.xmax - report.config.envelope.xmin) / 1000} m wide and {(report.config.envelope.ymax - report.config.envelope.ymin) / 1000} m deep.</li>
+      <li>Nobody moves faster than {(report.config.vmax / 1000).toFixed(1)} m/s, and they follow these exact paths at this tempo. Real dancers drift.</li>
+      <li>It rests on Lean's kernel and three standard axioms. It says nothing about whether the routine looks good or fits the music.</li>
+    </ul></section>
     <div className="vf-grid">
       <div>
-        <Group title="Inherited from the algebra" sub="Guarantees that follow from what these operations are." items={inherited} proofId={report.proofId} />
-        <Group title="Composition" sub="Do these movements fit together?" items={comp} proofId={report.proofId} />
-        <Group title="Geometry" sub="At every moment of the routine." items={geo} proofId={report.proofId} />
+        <Group title="General proofs" sub="Whole-formation moves keep every distance, for any formation. So nothing needs re-checking." items={inherited} proofId={report.proofId} />
+        <Group title="Continuous reasoning" sub="Dancers on their own paths can really collide between two valid formations. This covers every instant." items={exact} proofId={report.proofId} />
+        <Group title="Composition" sub="Each movement's guarantee gives the next what it needs, so the whole routine inherits them." items={comp} proofId={report.proofId} />
       </div>
       <div>
-        <Group title="Movement contracts" sub="What each movement guarantees, given what it requires." items={contracts} proofId={report.proofId} />
+        <Group title="The whole routine" sub={kernel.contract?.structural ? 'Built from the movements above. No phase of the routine was checked on its own.' : 'At every moment of the routine.'} items={geo} proofId={report.proofId} />
+        <Group title="Each movement" sub="What it gives you, given what it needs." items={contracts} proofId={report.proofId} />
         {program && <section className="ob-group"><h3>Transformations</h3><p className="ob-sub">Change the whole routine. Some guarantees carry over by a theorem about any routine. The rest, Lean checks again.</p>
           <div className="tf-buttons"><button className={`chip ${transform === '' ? 'on' : ''}`} onClick={() => onTransform('')}>Original</button>{TRANSFORMS.map(t => <button key={t.key} title={t.text} className={`chip ${transform === t.key ? 'on' : ''}`} onClick={() => onTransform(t.key)}>{t.title}</button>)}</div>
           {tf && <table className="tf-table"><tbody>{tf.rows.map(r => <tr key={r.property}><th>{r.property}</th><td>{r.how === 'theorem' ? <><span className="tf-theorem">By theorem</span> <code>{r.theorem}</code></> : <span className={`tf-recheck ${move}`}>{move === 'proved' ? 'Re-checked: holds' : STATUS_WORD[move]}</span>}<p>{r.note}</p></td></tr>)}</tbody></table>}

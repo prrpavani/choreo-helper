@@ -1,22 +1,28 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["172c5ec8fd1e49e8.olean"],
+ {"o": ["3552de1efbc99a56.olean"],
   "m": false,
-  "i": "31d841306630776e.ilean",
-  "c": "997573e5594c6196.c"},
+  "i": "a0cfe1b4838fcc12.ilean",
+  "c": "0ed6eae82a889453.c"},
  "log":
  [{"message":
    ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Program.lean -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Program.olean -i /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Program.ilean -c /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Program.c --setup /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Program.setup.json --json",
-   "level": "trace"}],
+   "level": "trace"},
+  {"message":
+   "Choreo/Program.lean:262:20: Variable name `sp` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _sp\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "Choreo/Program.lean:271:18: Variable name `sp` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _sp\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"}],
  "inputs":
  [["deps",
    [["choreo/Choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
     ["imports",
-     [["Choreo.Planner transitive imports (legacy)", "b7239b8e8ec63c57"],
-      ["Choreo.Planner:importAllArts", "2576ade8d31ce19d"],
-      ["Choreo.Language transitive imports (legacy)", "4656059468d61b28"],
-      ["Choreo.Language:importAllArts", "158748cda1ef3857"],
+     [["Choreo.Planner transitive imports (legacy)", "097b14b19481f9cf"],
+      ["Choreo.Planner:importAllArts", "927ef3913f57ff5d"],
+      ["Choreo.Language transitive imports (legacy)", "d03cd1e8094f33ed"],
+      ["Choreo.Language:importAllArts", "3af0d1f2753adb95"],
       ["Choreo.Composition transitive imports (legacy)", "eef05cd2c0bd522c"],
       ["Choreo.Composition:importAllArts", "e0e47884886d0ab9"]]]]],
   ["libs",
@@ -27,10 +33,10 @@
   ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
    "407ce514b71d5a10"],
   ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Program.lean",
-   "15c1b352b45e1203"],
+   "2e1906817fdd50bd"],
   ["options", "00000000000006bb"],
   ["isModule: false", "feefd2a0d3a1847e"],
   ["Module.name: Choreo.Program", "283a5fc030894acb"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "0ff969e9b766b05a"}
+ "depHash": "b03dc7766b1fadf2"}

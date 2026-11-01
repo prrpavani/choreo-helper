@@ -19,8 +19,8 @@
  [["deps",
    [["choreo/Choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
     ["imports",
-     [["Choreo.Emit transitive imports (legacy)", "05f96ad07a427776"],
-      ["Choreo.Emit:importAllArts", "1e81264461bb82e2"]]]]],
+     [["Choreo.Emit transitive imports (legacy)", "117a81a0fcb0c851"],
+      ["Choreo.Emit:importAllArts", "e10818669b3714f8"]]]]],
   ["libs",
    [["import dynlibs", "00000000000006bb"],
     ["package external libraries", "00000000000006bb"],
@@ -35,4 +35,4 @@
   ["Module.name: Choreo.Stress", "953e5e4f6e2630e9"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "a3795a4b90547b28"}
+ "depHash": "d6b1548279e303f9"}

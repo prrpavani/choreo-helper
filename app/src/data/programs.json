@@ -2,26 +2,14 @@
  {
   "id": "parallel-lines",
   "title": "Parallel Lines",
-  "idea": "Inherited guarantees",
-  "blurb": "Eight dancers, four whole-formation moves, one proof. Nothing is checked frame by frame: safety follows from what these operations are.",
+  "idea": "General proofs, continuous reasoning, composition",
+  "blurb": "Eight dancers. Whole-formation moves inherit safety from general theorems, then two groups split on their own paths, where Lean finds each pair's exact closest point.",
   "genre": "Cinematic",
   "bpm": 104,
   "n": 8,
   "gap": 600,
   "start": "staggered",
   "sections": [
-   {
-    "name": "Establish",
-    "ops": [
-     {
-      "kind": "translate",
-      "dx": 0,
-      "dy": 500,
-      "counts": 8,
-      "title": "Translate Upstage"
-     }
-    ]
-   },
    {
     "name": "Turn",
     "ops": [
@@ -34,8 +22,15 @@
     ]
    },
    {
-    "name": "Reflect",
+    "name": "Inherit",
     "ops": [
+     {
+      "kind": "translate",
+      "dx": 0,
+      "dy": -300,
+      "counts": 8,
+      "title": "Translate"
+     },
      {
       "kind": "mirror",
       "counts": 16,
@@ -44,14 +39,13 @@
     ]
    },
    {
-    "name": "Resolve",
+    "name": "Split",
     "ops": [
      {
-      "kind": "translate",
-      "dx": 0,
-      "dy": -500,
-      "counts": 8,
-      "title": "Translate Back"
+      "kind": "move",
+      "shape": "split",
+      "counts": 16,
+      "title": "Split into Two Groups"
      }
     ]
    }

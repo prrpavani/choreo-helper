@@ -7,7 +7,7 @@
   "c": "657438d0567f047d.c"},
  "log":
  [{"message":
-   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/lean/Choreo/Build.lean -o /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Build.olean -i /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Build.ilean -c /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Build.c --setup /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Build.setup.json --json",
+   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Build.lean -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Build.olean -i /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Build.ilean -c /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Build.c --setup /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Build.setup.json --json",
    "level": "trace"}],
  "inputs":
  [["deps",
@@ -16,7 +16,7 @@
      [["Choreo.QuickRefute transitive imports (legacy)", "76efd7391c2e091b"],
       ["Choreo.QuickRefute:importAllArts", "9bd67739223e69aa"],
       ["Choreo.Compose transitive imports (legacy)", "4c4a1baa8aa9642d"],
-      ["Choreo.Compose:importAllArts", "d2df2ecdd7166914"]]]]],
+      ["Choreo.Compose:importAllArts", "54085332ae9b870c"]]]]],
   ["libs",
    [["import dynlibs", "00000000000006bb"],
     ["package external libraries", "00000000000006bb"],
@@ -24,11 +24,11 @@
     ["module plugins", "00000000000006bb"]]],
   ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
    "407ce514b71d5a10"],
-  ["/Users/rrpavani/Documents/choreo-master/lean/Choreo/Build.lean",
+  ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Build.lean",
    "741bba1ee2fdb82d"],
   ["options", "00000000000006bb"],
   ["isModule: false", "feefd2a0d3a1847e"],
   ["Module.name: Choreo.Build", "f4601daae9b4d5b8"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "54eb09373c6d6c88"}
+ "depHash": "4b6fd8f1df9a4e1e"}

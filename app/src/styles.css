@@ -1026,3 +1026,41 @@ button.g-deep:hover { color: var(--ink); }
 .c-lean { margin-top: 5px; font-size: 12px; }
 .c-lean summary { cursor: pointer; color: var(--muted); overflow-wrap: anywhere; }
 .c-lean .lp-pre { font-size: 11px; margin-top: 4px; }
+
+.how { border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; font-size: 12.5px; line-height: 1.4; background: rgba(123,211,137,.09); }
+.how b { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--sage); margin-bottom: 3px; }
+.how p { margin: 0 0 4px; }
+.how-helps { color: var(--muted); }
+.how.how-rule { background: rgba(79,195,247,.09); }
+.how.how-rule b { color: #4FC3F7; }
+.how.how-exact { background: rgba(242,193,78,.09); }
+.how.how-exact b { color: #F2C14E; }
+.c-row.assume { border-style: dashed; }
+.bridge { margin-top: 7px; font-size: 12.5px; }
+.bridge summary { cursor: pointer; color: var(--muted); }
+.bridge-chain { list-style: none; margin: 7px 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.bridge-chain li { border-left: 2px solid var(--line); padding: 3px 0 3px 9px; overflow-wrap: anywhere; }
+.bridge-chain span { display: block; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+.bridge-chain code { display: block; font-size: 11.5px; }
+.bridge .lp-pre { font-size: 11px; }
+.vf-story, .vf-assume { margin-top: 12px; }
+.vf-story h3, .vf-assume h3 { margin: 0 0 7px; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--champagne); }
+.vf-chain { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 8px; padding: 0; }
+.vf-chain li { border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; background: var(--panel); font-size: 13px; }
+.vf-chain li span { display: block; }
+.vf-chain em { display: block; font-style: normal; font-size: 11px; font-weight: 700; }
+.vf-chain .how-inherited em { color: var(--sage); }
+.vf-chain .how-rule em { color: #4FC3F7; }
+.vf-chain .how-exact em { color: #F2C14E; }
+.vf-start em { color: var(--muted); }
+.vf-assume ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.5; color: var(--muted); columns: 2; column-gap: 28px; }
+@media (max-width: 900px) { .vf-assume ul { columns: 1; } }
+
+.para { margin: 0 0 8px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.para figcaption { font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+.para figcaption b { color: var(--ink); }
+.para svg { width: 100%; display: block; margin: 5px 0; }
+.para-line { fill: none; stroke: var(--ink); stroke-width: 2; }
+.para-lim { stroke: #FF6B5E; stroke-width: 1; stroke-dasharray: 3 4; }
+.para-low { fill: var(--sage); }
+.para-low.bad { fill: #FF6B5E; }

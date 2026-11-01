@@ -1,20 +1,20 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["b14ca5d95d2e5047.olean"],
+ {"o": ["777e59586bc40d6f.olean"],
   "m": false,
   "i": "47df9bb9c36e9028.ilean",
-  "c": "c241b4c89a1fc716.c"},
+  "c": "06191016b5e9dd00.c"},
  "log":
  [{"message":
-   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/lean/Choreo/Scene.lean -o /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Scene.olean -i /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Scene.ilean -c /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Scene.c --setup /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Scene.setup.json --json",
+   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Scene.lean -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Scene.olean -i /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Scene.ilean -c /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Scene.c --setup /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Scene.setup.json --json",
    "level": "trace"}],
  "inputs":
  [["deps",
    [["choreo/Choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
     ["imports",
-     [["Choreo.Planner transitive imports (legacy)", "b7239b8e8ec63c57"],
-      ["Choreo.Planner:importAllArts", "2576ade8d31ce19d"]]]]],
+     [["Choreo.Planner transitive imports (legacy)", "097b14b19481f9cf"],
+      ["Choreo.Planner:importAllArts", "927ef3913f57ff5d"]]]]],
   ["libs",
    [["import dynlibs", "00000000000006bb"],
     ["package external libraries", "00000000000006bb"],
@@ -22,11 +22,11 @@
     ["module plugins", "00000000000006bb"]]],
   ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
    "407ce514b71d5a10"],
-  ["/Users/rrpavani/Documents/choreo-master/lean/Choreo/Scene.lean",
+  ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Scene.lean",
    "8b217abd79308ab8"],
   ["options", "00000000000006bb"],
   ["isModule: false", "feefd2a0d3a1847e"],
   ["Module.name: Choreo.Scene", "7255bca26c79f1b6"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "b9c7443a86879e1d"}
+ "depHash": "4a2d295da8ec6e50"}

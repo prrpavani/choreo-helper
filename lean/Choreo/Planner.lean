@@ -1085,6 +1085,8 @@ structure Built where
   minSeconds : Nat := 0
   /-- Moves the planner wanted to add but left out, for time or for safety. -/
   dropped : List Move := []
+  /-- This routine's safety comes from its program's movements, so no phase needs checking on its own. -/
+  structural : Bool := false
   /-- The allowance for mistakes, in millimetres: anyone may drift this far from the plan. -/
   drift : Int := 0
 

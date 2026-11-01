@@ -1,19 +1,19 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["d9b7992ee487ad5c.olean"],
+ {"o": ["5d17a4b66994c396.olean"],
   "m": false,
-  "i": "470c4086b7de6d52.ilean",
-  "c": "6b37bed5341b727c.c"},
+  "i": "32c675f8decb3f7b.ilean",
+  "c": "9a587a67363b406a.c"},
  "log":
  [{"message":
    ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Emit.lean -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Emit.olean -i /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Emit.ilean -c /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Emit.c --setup /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Emit.setup.json --json",
    "level": "trace"},
   {"message":
-   "Choreo/Emit.lean:466:6: Variable name `phaseOk` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _phaseOk\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "Choreo/Emit.lean:468:6: Variable name `phaseOk` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _phaseOk\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
    "level": "warning"},
   {"message":
-   "Choreo/Emit.lean:468:6: Variable name `asksOk` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _asksOk\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "Choreo/Emit.lean:470:6: Variable name `asksOk` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _asksOk\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
    "level": "warning"}],
  "inputs":
  [["deps",
@@ -25,10 +25,10 @@
       ["Choreo.Source:importAllArts", "b99cdb839b2653a0"],
       ["Choreo.Tolerance transitive imports (legacy)", "739a70d2ca5b934e"],
       ["Choreo.Tolerance:importAllArts", "e71e2109bbe35f11"],
-      ["Choreo.Transforms transitive imports (legacy)", "81d144ce5baba254"],
-      ["Choreo.Transforms:importAllArts", "9fc53a4563e7aebc"],
-      ["Choreo.Program transitive imports (legacy)", "57b7cbcc371bb0b4"],
-      ["Choreo.Program:importAllArts", "129eecfe2e1f7d60"]]]]],
+      ["Choreo.Transforms transitive imports (legacy)", "d3d7d42059252071"],
+      ["Choreo.Transforms:importAllArts", "6e3c73e06b235621"],
+      ["Choreo.Program transitive imports (legacy)", "f1e4523efe73c7e9"],
+      ["Choreo.Program:importAllArts", "df1e047bb8a42dcc"]]]]],
   ["libs",
    [["import dynlibs", "00000000000006bb"],
     ["package external libraries", "00000000000006bb"],
@@ -37,10 +37,10 @@
   ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
    "407ce514b71d5a10"],
   ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Emit.lean",
-   "28205b1ed1ede89f"],
+   "cc70b6e8667d1c52"],
   ["options", "00000000000006bb"],
   ["isModule: false", "feefd2a0d3a1847e"],
   ["Module.name: Choreo.Emit", "63d166eb303c2a28"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "4738d212d83b378b"}
+ "depHash": "3cec0529c04bb23f"}

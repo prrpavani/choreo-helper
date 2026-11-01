@@ -1,4 +1,4 @@
-import Choreo.Recipes
+import Choreo.RotationPath
 /-!
 # Choreography as a program
 
@@ -46,8 +46,6 @@ inductive Pred where
   /-- Both claims. -/
   | both (p q : Pred)
 
-def gapSq' (a b : Pt) : Int := (a.x - b.x) ^ 2 + (a.y - b.y) ^ 2
-
 /-- Whether a claim is true of a state. -/
 def Pred.holds : Pred → State → Bool
   | .anything, _ => true
@@ -67,16 +65,18 @@ def Pred.holds : Pred → State → Bool
 
 /-- A movement. Each one says exactly which paths the dancers take. -/
 inductive Op where
-  /-- Everyone walks to these places. Safety is established by Lean's checker on the actual paths. -/
-  | move (target : State) (beats : Nat) (certs : List Cert)
-  /-- Everyone turns a quarter about `centre`, on an exact arc. -/
-  | turn (centre : Pt) (ccw : Bool) (beats : Nat) (certs : List Cert) (orbits : List Orbit)
+  /-- Each dancer walks straight to their own place. These are independent paths, so a clash is possible.
+      Safety comes from the exact lowest point of each pair's separation: see `linear_pair_safe`. -/
+  | move (target : State) (beats : Nat)
+  /-- Everyone turns a quarter about `centre`, on an exact arc. Safe by `turning_keeps_the_gap`: if the
+      formation starts collision-free, no moment of the turn needs looking at. -/
+  | turn (centre : Pt) (ccw : Bool) (beats : Nat)
   /-- Each dancer shifts by their own amount. Safety follows from a rule about the starting places,
       with no checking of curves. Translation, group exchange and steps in unison are all slides. -/
   | slide (deltas : List (Int × Int)) (beats : Nat)
-  /-- Two groups move at once, each in its own part of the stage. Each group is checked on its own, and
+  /-- Two groups move at once, each in its own part of the stage. Pairs in a group use the exact test, and
       the groups can't meet because a line stays between them, so no pair across groups is examined. -/
-  | par (left right : List Nat) (line : Int) (target : State) (beats : Nat) (certs : List Cert)
+  | par (left right : List Nat) (line : Int) (target : State) (beats : Nat)
 
 def Pt.quarter (c a : Pt) (ccw : Bool) : Pt :=
   let dx := a.x - c.x
@@ -84,13 +84,13 @@ def Pt.quarter (c a : Pt) (ccw : Bool) : Pt :=
   if ccw then ⟨c.x - dy, c.y + dx⟩ else ⟨c.x + dy, c.y - dx⟩
 
 def Op.beats : Op → Nat
-  | .move _ b _ | .turn _ _ b _ _ | .slide _ b | .par _ _ _ _ b _ => b
+  | .move _ b | .turn _ _ b | .slide _ b | .par _ _ _ _ b => b
 
 /-- Where the dancers stand after the movement. -/
 def Op.next (op : Op) (n : Nat) (s : State) : State :=
   match op with
-  | .move target _ _ | .par _ _ _ target _ _ => target
-  | .turn c ccw _ _ _ => (List.range n).map fun i => c.quarter (s.at i) ccw
+  | .move target _ | .par _ _ _ target _ => target
+  | .turn c ccw _ => (List.range n).map fun i => c.quarter (s.at i) ccw
   | .slide ds _ => (List.range n).map fun i =>
       let d := ds.getD i (0, 0)
       ⟨(s.at i).x + d.1, (s.at i).y + d.2⟩
@@ -98,22 +98,14 @@ def Op.next (op : Op) (n : Nat) (s : State) : State :=
 /-- The path dancer `i` takes. -/
 def Op.pathOf (op : Op) (n : Nat) (s : State) (i : Nat) : Path :=
   match op with
-  | .turn c ccw _ _ _ => rotatePath c (s.at i) ccw
+  | .turn c ccw _ => rotatePath c (s.at i) ccw
   | _ => easePath (s.at i) ((op.next n s).at i)
-
-def Op.certs : Op → List Cert
-  | .move _ _ cs | .turn _ _ _ cs _ | .par _ _ _ _ _ cs => cs
-  | .slide _ _ => []
-
-def Op.orbits : Op → List Orbit
-  | .turn _ _ _ _ os => os
-  | _ => []
 
 /-- The movement as one timed phase, starting at tick `t`. -/
 def Op.phase (op : Op) (c : Config) (t : Nat) (s : State) : Phase :=
   { t0 := t, t1 := t + op.beats * c.ticksPerBeat,
-    paths := (List.range c.n).map (op.pathOf c.n s), bounds := c.stage, certs := op.certs,
-    rigid := [], orbits := op.orbits, target := none }
+    paths := (List.range c.n).map (op.pathOf c.n s), bounds := c.stage, certs := [],
+    rigid := [], orbits := [], target := none }
 
 /-! ## When a movement may run -/
 
@@ -128,11 +120,32 @@ def slideClear (c : Config) (s : State) (ds : List (Int × Int)) : Bool :=
   (List.range c.n).all fun i => (List.range i).all fun j =>
     slidePairOk c.dmin (s.at i) (s.at j) (ds.getD i (0, 0)) (ds.getD j (0, 0))
 
-/-- Two dancers in the same group use the checker. Across the two groups, the line does the work. -/
-def parClear (c : Config) (ph : Phase) (left right : List Nat) (line : Int) (s target : State) : Bool :=
+/-- How the squared distance between two straight-moving dancers depends on how far along they are: it
+    is exactly `A u² + 2 B u + C`, for `u` from 0 to 1. -/
+def gapQuad (a b c d : Pt) : Int × Int × Int :=
+  let rx := a.x - c.x
+  let ry := a.y - c.y
+  let vx := (b.x - a.x) - (d.x - c.x)
+  let vy := (b.y - a.y) - (d.y - c.y)
+  (vx * vx + vy * vy, rx * vx + ry * vy, rx * rx + ry * ry)
+
+/-- The exact test: find where that quadratic is lowest between 0 and 1, and compare it with the gap. -/
+def linearPairClear (m : Int) (a b c d : Pt) : Bool :=
+  let (A, B, C) := gapQuad a b c d
+  if A == 0 then B == 0 && decide (m * m ≤ C)
+  else if 0 ≤ B then decide (m * m ≤ C)
+  else if A ≤ -B then decide (m * m ≤ A + 2 * B + C)
+  else decide (m * m * A ≤ C * A - B * B)
+
+def moveClear (c : Config) (s target : State) : Bool :=
+  (List.range c.n).all fun i => (List.range i).all fun j =>
+    linearPairClear c.dmin (s.at i) (target.at i) (s.at j) (target.at j)
+
+/-- Two dancers in the same group use the exact test. Across the two groups, the line does the work. -/
+def parClear (c : Config) (left right : List Nat) (line : Int) (s target : State) : Bool :=
   (List.range c.n).all fun i => (List.range i).all fun j =>
     if (left.contains i && left.contains j) || (right.contains i && right.contains j) then
-      (ph.pairCert i j).check (ph.path i) (ph.path j) c.dmin
+      linearPairClear c.dmin (s.at i) (target.at i) (s.at j) (target.at j)
     else if left.contains i && right.contains j then
       decide ((s.at i).x ≤ line) && decide ((target.at i).x ≤ line) &&
         decide (line + c.dmin ≤ (s.at j).x) && decide (line + c.dmin ≤ (target.at j).x)
@@ -152,10 +165,11 @@ def Op.enabled (op : Op) (c : Config) (s : State) : Bool :=
   let ph := op.phase c 0 s
   endpointsOk c ph s (op.next c.n s) &&
   match op with
-  | .move .. | .turn .. => Phase.check c ph
+  | .move target _ => c.wf && Phase.checkPaths c ph && moveClear c s target
+  | .turn .. => c.wf && Phase.checkPaths c ph && (Pred.separated c.n c.dmin).holds s
   | .slide ds _ => c.wf && Phase.checkPaths c ph && slideClear c s ds
-  | .par left right line target _ _ =>
-    c.wf && Phase.checkPaths c ph && parClear c ph left right line s target
+  | .par left right line target _ =>
+    c.wf && Phase.checkPaths c ph && parClear c left right line s target
 
 /-! ## Programs -/
 
@@ -171,7 +185,9 @@ def Step.ok (st : Step) (c : Config) (s : State) : Bool :=
 
 /-- The phases a program plays are the phases of this routine: same times, same paths. -/
 def samePhase (n : Nat) (a b : Phase) : Bool :=
-  a.t0 == b.t0 && a.t1 == b.t1 && (List.range n).all fun i =>
+  a.t0 == b.t0 && a.t1 == b.t1 &&
+  a.bounds.xmin == b.bounds.xmin && a.bounds.xmax == b.bounds.xmax && a.bounds.ymin == b.bounds.ymin && a.bounds.ymax == b.bounds.ymax &&
+  b.rigid.isEmpty && b.orbits.isEmpty && b.target.isNone && (List.range n).all fun i =>
     (a.path i).X == (b.path i).X && (a.path i).Y == (b.path i).Y && (a.path i).W == (b.path i).W
 
 def samePhases (n : Nat) : List Phase → List Phase → Bool
@@ -334,6 +350,89 @@ theorem par_pair_safe {d line : Int} (h0 : 0 ≤ d) {a₁ b₁ a₂ b₂ : Pt}
   let r := easeShare_range h₀ h₁
   separate_halves_never_clash h0 ha₁ hb₁ ha₂ hb₂ r.1 r.2
 
+/-! ## Independent straight paths: exact collision analysis, with no sampling -/
+
+/-- **The separation of two independently moving dancers is exactly a quadratic** in how far along they
+    are, whatever the timing of the move. This is why it can be analysed rather than sampled. -/
+theorem separation_is_quadratic_on_stage (a b c d : Pt) (t : K) :
+    dist2 (easePath a b) (easePath c d) t =
+      (((gapQuad a b c d).1 : Int) : K) * (easeShare t * easeShare t)
+        + 2 * (((gapQuad a b c d).2.1 : Int) : K) * easeShare t + (((gapQuad a b c d).2.2 : Int) : K) := by
+  simp only [dist2, ease_x, ease_y, gapQuad, Ring.intCast_add, Ring.intCast_sub, Ring.intCast_mul]
+  generalize easeShare t = u
+  simp only [Semiring.pow_succ, Semiring.pow_zero]
+  grind
+
+private theorem qnn {u v : K} (hu : 0 ≤ u) (hv : 0 ≤ v) : 0 ≤ u * v := OrderedRing.mul_nonneg hu hv
+private theorem qsq (u : K) : 0 ≤ u * u := by have := OrderedRing.sq_nonneg (a := u); simp only [Semiring.pow_succ, Semiring.pow_zero] at this; grind
+
+/-- **Exact collision analysis is sound.** If the test passes, the two dancers stay at least `m` apart at
+    every moment of the move. No time is sampled: the lowest point of the quadratic is worked out exactly. -/
+theorem linear_pair_safe {m : Int} {a b c d : Pt} (h : linearPairClear m a b c d = true) {t : K} (h0 : 0 ≤ t) (h1 : t ≤ 1) :
+    ((m : Int) : K) ^ 2 ≤ dist2 (easePath a b) (easePath c d) t := by
+  rw [separation_is_quadratic_on_stage]
+  obtain ⟨u0, u1⟩ := easeShare_range h0 h1
+  generalize easeShare t = u at *
+  have hAint : 0 ≤ (gapQuad a b c d).1 := by
+    simp only [gapQuad]
+    have x := OrderedRing.sq_nonneg (R := Int) (a := (b.x - a.x) - (d.x - c.x))
+    have y := OrderedRing.sq_nonneg (R := Int) (a := (b.y - a.y) - (d.y - c.y))
+    simp only [Semiring.pow_succ, Semiring.pow_zero] at x y
+    grind
+  simp only [linearPairClear] at h
+  generalize gapQuad a b c d = g at *
+  obtain ⟨A, B, C⟩ := g
+  simp only at h hAint ⊢
+  have hA : (0 : K) ≤ ((A : Int) : K) := OrderedRing.nonneg_intCast_of_nonneg A hAint
+  have uu := qsq u
+  simp only [Semiring.pow_succ, Semiring.pow_zero]
+  split at h
+  · rename_i e
+    simp only [beq_iff_eq] at e
+    simp only [Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at h
+    obtain ⟨hB, hd⟩ := h
+    subst e; subst hB
+    have q := intCast_le (K := K) hd
+    rw [Ring.intCast_mul] at q
+    simp only [Ring.intCast_zero]
+    grind
+  · rename_i e0
+    have hApos : 0 < A := by simp only [beq_iff_eq] at e0; grind
+    have hAK : (0 : K) < ((A : Int) : K) := OrderedRing.pos_intCast_of_pos A hApos
+    split at h
+    · rename_i hB
+      simp only [decide_eq_true_eq] at h
+      have q := intCast_le (K := K) h
+      rw [Ring.intCast_mul] at q
+      have m1 := qnn hA uu
+      have m2 := qnn (OrderedRing.nonneg_intCast_of_nonneg B hB) u0
+      grind
+    · split at h
+      · rename_i _ hBA
+        simp only [decide_eq_true_eq] at h
+        have q := intCast_le (K := K) h
+        simp only [Ring.intCast_mul, Ring.intCast_add, Ring.intCast_ofNat] at q
+        have bq := intCast_le (K := K) hBA
+        simp only [Ring.intCast_neg] at bq
+        have one : 0 ≤ 1 - u := by grind
+        have m := qnn one (show 0 ≤ -2 * ((B : Int) : K) - ((A : Int) : K) * (1 + u) by
+          have mm := qnn hA (show 0 ≤ 1 - u by grind)
+          grind)
+        grind
+      · simp only [decide_eq_true_eq] at h
+        have q := intCast_le (K := K) h
+        simp only [Ring.intCast_mul, Ring.intCast_sub] at q
+        have sq := qsq (((A : Int) : K) * u + ((B : Int) : K))
+        have key : 0 ≤ ((A : Int) : K) * (((A : Int) : K) * (u * u) + 2 * ((B : Int) : K) * u + ((C : Int) : K) - ((m : Int) : K) * ((m : Int) : K)) := by
+          have e : ((A : Int) : K) * (((A : Int) : K) * (u * u) + 2 * ((B : Int) : K) * u + ((C : Int) : K) - ((m : Int) : K) * ((m : Int) : K))
+              = (((A : Int) : K) * u + ((B : Int) : K)) * (((A : Int) : K) * u + ((B : Int) : K)) + (((C : Int) : K) * ((A : Int) : K) - ((B : Int) : K) * ((B : Int) : K) - ((m : Int) : K) * ((m : Int) : K) * ((A : Int) : K)) := by grind
+          rw [e]; grind
+        apply Classical.byContradiction
+        intro hn
+        have neg : ((A : Int) : K) * (u * u) + 2 * ((B : Int) : K) * u + ((C : Int) : K) - ((m : Int) : K) * ((m : Int) : K) < 0 := by grind
+        have := OrderedRing.mul_lt_mul_of_pos_left neg hAK
+        grind
+
 /-! ## From a movement's checks to its safety -/
 
 /-- Paths, bounds and speed from the checker, and clearance from any argument at all, give the full specification. -/
@@ -408,33 +507,63 @@ theorem slide_spec {c : Config} {ds : List (Int × Int)} {b t : Nat} {s : State}
   | inr hgt =>
     exact slide_pair_safe hd (hc i hi j hgt) u
 
-/-- Parallel groups are safe: within a group by its own check, across groups by the line. -/
-theorem par_spec {c : Config} {L R : List Nat} {line : Int} {target : State} {b t : Nat} {cs : List Cert} {s : State}
-    (hd : 0 ≤ c.dmin)
-    (hp : Phase.checkPaths c ((Op.par L R line target b cs).phase c t s) = true)
-    (hc : parClear c ((Op.par L R line target b cs).phase c t s) L R line s target = true) :
-    PhaseSpec K c ((Op.par L R line target b cs).phase c t s) := by
-  have hp' := hp
+/-- Turning is safe by the turning rule: every gap is what it was at the start. -/
+theorem turn_spec {c : Config} {cen : Pt} {ccw : Bool} {b t : Nat} {s : State}
+    (hp : Phase.checkPaths c ((Op.turn cen ccw b).phase c t s) = true)
+    (hs : (Pred.separated c.n c.dmin).holds s = true) :
+    PhaseSpec K c ((Op.turn cen ccw b).phase c t s) := by
   refine PhaseSpec.of_clear hp rfl rfl rfl ?_
-  simp only [Phase.checkPaths, List.all_eq_true, List.mem_range, Bool.and_eq_true] at hp'
+  intro i j hi hj hij u h0 h1
+  simp only [Op.path_phase hi, Op.path_phase hj, Op.pathOf]
+  rw [turning_keeps_the_gap _ _ _ _ h0 h1]
+  simp only [Pred.holds, List.all_eq_true, List.mem_range, decide_eq_true_eq] at hs
+  have key : c.dmin * c.dmin ≤ gapSq' (s.at i) (s.at j) := by
+    cases Nat.lt_or_gt_of_ne hij with
+    | inl hlt =>
+      have := hs j hj i hlt
+      have sym : gapSq' (s.at j) (s.at i) = gapSq' (s.at i) (s.at j) := by simp only [gapSq', Int.pow_succ, Int.pow_zero]; grind
+      rw [← sym]; exact this
+    | inr hgt => exact hs i hi j hgt
+  have cast : ((c.dmin * c.dmin : Int) : K) ≤ ((gapSq' (s.at i) (s.at j) : Int) : K) := intCast_le key
+  rw [Ring.intCast_mul] at cast
+  simp only [Semiring.pow_succ, Semiring.pow_zero]
+  grind
+
+/-- Independent moves are safe by the exact test on every pair. -/
+theorem move_spec {c : Config} {target : State} {b t : Nat} {s : State}
+    (hp : Phase.checkPaths c ((Op.move target b).phase c t s) = true) (hc : moveClear c s target = true) :
+    PhaseSpec K c ((Op.move target b).phase c t s) := by
+  refine PhaseSpec.of_clear hp rfl rfl rfl ?_
+  intro i j hi hj hij u h0 h1
+  simp only [Op.path_phase hi, Op.path_phase hj, Op.pathOf, Op.next]
+  simp only [moveClear, List.all_eq_true, List.mem_range] at hc
+  cases Nat.lt_or_gt_of_ne hij with
+  | inl hlt => rw [dist2_symm]; exact linear_pair_safe (hc j hj i hlt) h0 h1
+  | inr hgt => exact linear_pair_safe (hc i hi j hgt) h0 h1
+
+/-- Parallel groups are safe: within a group by the exact test, across groups by the line. -/
+theorem par_spec {c : Config} {L R : List Nat} {line : Int} {target : State} {b t : Nat} {s : State}
+    (hd : 0 ≤ c.dmin)
+    (hp : Phase.checkPaths c ((Op.par L R line target b).phase c t s) = true)
+    (hc : parClear c L R line s target = true) :
+    PhaseSpec K c ((Op.par L R line target b).phase c t s) := by
+  refine PhaseSpec.of_clear hp rfl rfl rfl ?_
   simp only [parClear, List.all_eq_true, List.mem_range] at hc
-  -- one ordered pair at a time
   have key : ∀ i j, i < c.n → j < i → ∀ u : K, 0 ≤ u → u ≤ 1 →
-      ((c.dmin : Int) : K) ^ 2 ≤ dist2 (((Op.par L R line target b cs).phase c t s).path i) (((Op.par L R line target b cs).phase c t s).path j) u := by
+      ((c.dmin : Int) : K) ^ 2 ≤ dist2 (((Op.par L R line target b).phase c t s).path i) (((Op.par L R line target b).phase c t s).path j) u := by
     intro i j hi hj u h0 h1
     have hjn : j < c.n := by omega
     have w := hc i hi j hj
+    simp only [Op.path_phase hi, Op.path_phase hjn, Op.pathOf, Op.next]
     split at w
-    · exact Cert.sound hd (hp' i hi).1.1 (hp' j hjn).1.1 w h0 h1
+    · exact linear_pair_safe w h0 h1
     · split at w
       · simp only [Bool.and_eq_true, decide_eq_true_eq] at w
         obtain ⟨⟨⟨a1, a2⟩, a3⟩, a4⟩ := w
-        simp only [Op.path_phase hi, Op.path_phase hjn, Op.pathOf, Op.next]
         exact par_pair_safe hd a1 a2 a3 a4 h0 h1
       · split at w
         · simp only [Bool.and_eq_true, decide_eq_true_eq] at w
           obtain ⟨⟨⟨a1, a2⟩, a3⟩, a4⟩ := w
-          simp only [Op.path_phase hi, Op.path_phase hjn, Op.pathOf, Op.next]
           rw [dist2_symm]
           exact par_pair_safe hd a1 a2 a3 a4 h0 h1
         · cases w
@@ -456,22 +585,22 @@ theorem Op.sound {op : Op} {c : Config} {s : State} (h : op.enabled c s = true) 
     simp only [Config.wf, Bool.and_eq_true, decide_eq_true_eq] at w
     exact w.1.1.1
   cases op with
-  | move target b cs =>
-    exact Phase.sound (Phase.check_shift (ph := Op.phase (.move target b cs) c 0 s) (ph' := Op.phase (.move target b cs) c t s) rfl rfl rfl rfl rfl rfl (by simp [Op.phase]) hrest) K
-  | turn cen ccw b cs os =>
-    exact Phase.sound (Phase.check_shift (ph := Op.phase (.turn cen ccw b cs os) c 0 s) (ph' := Op.phase (.turn cen ccw b cs os) c t s) rfl rfl rfl rfl rfl rfl (by simp [Op.phase]) hrest) K
+  | move target b =>
+    simp only [Bool.and_eq_true] at hrest
+    obtain ⟨⟨_, p⟩, cl⟩ := hrest
+    exact move_spec (Op.checkPaths_shift _ c t s p) cl
+  | turn cen ccw b =>
+    simp only [Bool.and_eq_true] at hrest
+    obtain ⟨⟨_, p⟩, sep⟩ := hrest
+    exact turn_spec (Op.checkPaths_shift _ c t s p) sep
   | slide ds b =>
     simp only [Bool.and_eq_true] at hrest
     obtain ⟨⟨w, p⟩, cl⟩ := hrest
     exact slide_spec (wfd w) (Op.checkPaths_shift _ c t s p) cl
-  | par L R line target b cs =>
+  | par L R line target b =>
     simp only [Bool.and_eq_true] at hrest
     obtain ⟨⟨w, p⟩, cl⟩ := hrest
-    refine par_spec (wfd w) (Op.checkPaths_shift _ c t s p) ?_
-    have ee : parClear c ((Op.par L R line target b cs).phase c t s) L R line s target
-        = parClear c ((Op.par L R line target b cs).phase c 0 s) L R line s target := by
-      simp only [parClear, Phase.pairCert, Phase.path, Op.phase]
-    rw [ee]; exact cl
+    exact par_spec (wfd w) (Op.checkPaths_shift _ c t s p) cl
 
 /-- **A movement's contract.** If the step's contract is met in state `a`, the program consisting of
     that step runs safely from `a`, ends where it says, and its promise is true of the result. -/
@@ -489,6 +618,75 @@ theorem Step.triple {st : Step} {c : Config} {a : State} (h : st.ok c a = true) 
 theorem Step.triple_at {st : Step} {c : Config} {a b : State} (h : st.ok c a = true) (hb : st.op.next c.n a = b) :
     Triple K c (· = a) (.step st) (· = b) :=
   Triple.consequence (fun _ h => h) (Step.triple h) (fun _ h => h.1.trans hb)
+
+/-- Every step can run, whatever each one's contract says about the step before. -/
+def Prog.allRun (c : Config) : Prog → Nat → State → Bool
+  | .skip, _, _ => true
+  | .step st, _, s => st.op.enabled c s
+  | .seq a b, t, s =>
+    let ra := Prog.exec c a t s
+    Prog.allRun c a t s && Prog.allRun c b ra.2.1 ra.2.2
+  | .rep _ _, _, _ => false
+
+/-- **The whole program runs safely**, from the safety of its movements. -/
+theorem Prog.run_of_allRun {c : Config} {p : Prog} {t : Nat} {s : State} (h : Prog.allRun c p t s = true) :
+    Run K c s (Prog.exec c p t s).1 (Prog.exec c p t s).2.2 := by
+  induction p generalizing t s with
+  | skip => simp only [Prog.exec]; exact .nil s
+  | step st =>
+    obtain ⟨sp, a, e⟩ := Op.sound (K := K) (show st.op.enabled c s = true from h) t
+    simp only [Prog.exec]
+    exact .cons sp a e (.nil _)
+  | seq a b iha ihb =>
+    simp only [Prog.allRun, Bool.and_eq_true] at h
+    simp only [Prog.exec]
+    exact Run.append (iha h.1) (ihb h.2)
+  | rep k q ih => simp [Prog.allRun] at h
+
+/-- Two phases that agree on times, bounds and paths meet the specification together. -/
+theorem PhaseSpec.of_same {c : Config} {a b : Phase} (h : samePhase c.n a b = true) (ha : PhaseSpec K c a) : PhaseSpec K c b := by
+  simp only [samePhase, Bool.and_eq_true, beq_iff_eq, List.all_eq_true, List.mem_range, List.isEmpty_iff, Option.isNone_iff_eq_none] at h
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨t0, t1⟩, b1⟩, b2⟩, b3⟩, b4⟩, hr⟩, ho⟩, ht⟩, hp⟩ := h
+  have path : ∀ i, i < c.n → b.path i = a.path i := by
+    intro i hi
+    obtain ⟨⟨x, y⟩, w⟩ := hp i hi
+    cases hA : a.path i
+    cases hB : b.path i
+    simp_all
+  have dur : c.durNum b = c.durNum a := by simp only [Config.durNum, t0, t1]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro i j hi hj hij u h0 h1
+    rw [path i hi, path j hj]
+    exact ha.noCollision i j hi hj hij u h0 h1
+  · intro i hi u h0 h1
+    rw [path i hi, ← b1, ← b2, ← b3, ← b4]
+    exact ha.onStage i hi u h0 h1
+  · intro i hi u h0 h1
+    rw [path i hi, dur]
+    exact ha.speedLimit i hi u h0 h1
+  · intro r hm; rw [hr] at hm; cases hm
+  · intro o hm; rw [ho] at hm; cases hm
+  · intro tg hm; rw [ht] at hm; cases hm
+
+/-- **The routine inherits its safety from its program.** Every phase of a routine that matches a safe run is safe. -/
+theorem specs_of_run {c : Config} {xs ys : List Phase} {a b : State} (hr : Run K c a xs b) (h : samePhases c.n xs ys = true) :
+    ∀ ph, ph ∈ ys → PhaseSpec K c ph := by
+  have safe := Run.safe hr
+  clear hr
+  induction xs generalizing ys with
+  | nil =>
+    cases ys with
+    | nil => intro ph hm; cases hm
+    | cons y ys => simp [samePhases] at h
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp [samePhases] at h
+    | cons y ys =>
+      simp only [samePhases, Bool.and_eq_true] at h
+      intro ph hm
+      cases hm with
+      | head => exact PhaseSpec.of_same h.1 (safe x (.head _))
+      | tail _ hm' => exact ih h.2 (fun p hp => safe p (.tail _ hp)) ph hm'
 
 end Semantics
 

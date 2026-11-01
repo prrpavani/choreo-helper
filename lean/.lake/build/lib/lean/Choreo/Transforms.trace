@@ -1,13 +1,13 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["433f62295dd78534.olean"],
+ {"o": ["f016ad656ee98fdb.olean"],
   "m": false,
-  "i": "79174318b3d03068.ilean",
-  "c": "f32be044e6c4b5c6.c"},
+  "i": "b0f3c6056fa1ffee.ilean",
+  "c": "b76012be75ab7ea4.c"},
  "log":
  [{"message":
-   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/lean/Choreo/Transforms.lean -o /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Transforms.olean -i /Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Transforms.ilean -c /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Transforms.c --setup /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Transforms.setup.json --json",
+   ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Transforms.lean -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Transforms.olean -i /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Transforms.ilean -c /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Transforms.c --setup /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Transforms.setup.json --json",
    "level": "trace"},
   {"message":
    "Choreo/Transforms.lean:31:75: `if_true` has been deprecated: Use `ite_true` instead\n\nHint: Replace the deprecated name:\n  i̵f̵_̵t̵r̵u̵e̵i̲t̲e̲_̲t̲r̲u̲e̲",
@@ -28,8 +28,8 @@
  [["deps",
    [["choreo/Choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
     ["imports",
-     [["Choreo.Language transitive imports (legacy)", "4656059468d61b28"],
-      ["Choreo.Language:importAllArts", "158748cda1ef3857"]]]]],
+     [["Choreo.Language transitive imports (legacy)", "d03cd1e8094f33ed"],
+      ["Choreo.Language:importAllArts", "3af0d1f2753adb95"]]]]],
   ["libs",
    [["import dynlibs", "00000000000006bb"],
     ["package external libraries", "00000000000006bb"],
@@ -37,11 +37,11 @@
     ["module plugins", "00000000000006bb"]]],
   ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
    "407ce514b71d5a10"],
-  ["/Users/rrpavani/Documents/choreo-master/lean/Choreo/Transforms.lean",
+  ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Transforms.lean",
    "58d7f9a5d80d96c5"],
   ["options", "00000000000006bb"],
   ["isModule: false", "feefd2a0d3a1847e"],
   ["Module.name: Choreo.Transforms", "6fa8ef2b848f9266"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "464bb1ed0d799f98"}
+ "depHash": "20e537071260bdac"}

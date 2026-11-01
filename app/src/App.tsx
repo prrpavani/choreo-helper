@@ -35,7 +35,7 @@ type View = 'Plan' | 'Stage' | 'Theatre'
 interface Override { move: number; dancer: number; x: number; y: number }
 interface Snapshot { report: Report; kernel: KernelState; overrides: Override[]; scene: SceneData | null }
 
-const freshKernel = (): KernelState => ({ status: 'running', phases: 0, ms: 0, axioms: null, fingerprintMatch: null, errors: [], rejected: 0, parts: { movement: false }, contract: { steps: [], links: [], broken: [], composed: false, sameRoutine: false, algebra: [] }, transitions: [] })
+const freshKernel = (): KernelState => ({ status: 'running', phases: 0, ms: 0, axioms: null, fingerprintMatch: null, errors: [], rejected: 0, parts: { movement: false }, contract: { steps: [], links: [], broken: [], composed: false, sameRoutine: false, algebra: [], library: false, structural: false, witnesses: [] }, transitions: [] })
 
 export function Workspace({ active, seed }: { active: boolean; seed: Seed | null }) {
   const [prompt, setPrompt] = useState('')
@@ -387,7 +387,7 @@ export function Workspace({ active, seed }: { active: boolean; seed: Seed | null
           {mode === 'Perform' && <Perform report={report} kernel={kernel} program={report.program} title={titleNow} />}
         </div>
       </section>
-      {mode === 'Create' && <ProofRail report={report} kernel={kernel} onFocus={showMoment} onUndo={undoEdit} canUndo={!!undo} onReadProof={() => setMode('Verify')} selection={selection} onClearSelection={() => setSelection([])} history={history} currentId={currentId} onRestore={restore} onVerify={verify} onApplyScene={applyScene} onUseSeconds={sec => onParams({ ...brief, seconds: sec })} settings={program ? <OpInspector program={program} report={report.program} kernel={kernel} at={selectedOp} onChange={changeProgram} onSelect={(a, b) => setSelectedOp([a, b])} /> : <Params brief={brief} onChange={onParams} locked={busy} minSeconds={report.scene ? undefined : report.minSeconds} />} crossings={<Crossings report={report} kernel={kernel} onWatch={watchCrossing} onCrash={showRejected} onFocus={showMoment} />} />}
+      {mode === 'Create' && <ProofRail report={report} kernel={kernel} onFocus={showMoment} onUndo={undoEdit} canUndo={!!undo} onReadProof={() => setMode('Verify')} selection={selection} onClearSelection={() => setSelection([])} history={history} currentId={currentId} onRestore={restore} onVerify={verify} onApplyScene={applyScene} onUseSeconds={sec => onParams({ ...brief, seconds: sec })} settings={program ? <OpInspector program={program} report={report.program} kernel={kernel} at={selectedOp} onChange={changeProgram} onSelect={(a, b) => setSelectedOp([a, b])} gap={report.config.dmin} /> : <Params brief={brief} onChange={onParams} locked={busy} minSeconds={report.scene ? undefined : report.minSeconds} />} crossings={<Crossings report={report} kernel={kernel} onWatch={watchCrossing} onCrash={showRejected} onFocus={showMoment} />} />}
     </main>
     {mode === 'Create' && program && <Sequence program={program} report={report.program} kernel={kernel} selected={selectedOp} onSelect={selectOp} onAdd={kind => { const make = OP_KINDS.find(k => k.kind === kind)!.make(), si = selectedOp?.[0] ?? program.sections.length - 1, at = selectedOp ? selectedOp[1] + 1 : program.sections[si].ops.length; changeProgram(insertOp(program, si, at, make), `Added ${make.title}`); setSelectedOp([si, at]) }} />}
     {mode !== 'Perform' && <Gauges report={shown} kernel={kernel} ghost={!!ghost} onFocus={(sec, who) => { clock.pause(); clock.seek(sec); setSelection(who); setMode('Create') }} />}

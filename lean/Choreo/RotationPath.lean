@@ -1,4 +1,4 @@
-import Choreo.Language
+import Choreo.Recipes
 /-!
 # The rotation the app actually plays
 
@@ -12,6 +12,9 @@ namespace Choreo
 section
 variable {K : Type} [Field K] [LE K] [LT K] [LawfulOrderLT K] [IsLinearOrder K] [OrderedRing K]
 attribute [local instance] Semiring.natCast Ring.intCast
+
+/-- Squared distance between two whole-number points. -/
+def gapSq' (a b : Pt) : Int := (a.x - b.x) ^ 2 + (a.y - b.y) ^ 2
 
 private abbrev QP : Poly := [1, 3, 3, 1]
 private abbrev PP : Poly := [0, 0, 3, 1]
@@ -52,7 +55,7 @@ private theorem ev_combo (u v w : Int) (t : K) :
         (Poly.sub (Poly.scale v (Poly.sub (Poly.mul QP QP) (Poly.mul PP PP))) (Poly.scale w (Poly.scale 2 (Poly.mul PP QP))))) (1 - t) t
       = (u : K) * rw' t + (v : K) * ra t - (w : K) * rb t := by
   rw [ev_add _ _ (by rw [sW, length_sub _ _ ((sA v).trans (sB w).symm), sA]),
-    ev_sub _ _ ((sA v).trans (sB w).symm), ev_scale, ev_scale, ev_scale, W_ev, A_ev, B_ev]
+    ev_sub _ _ ((sA v).trans (sB w).symm), ev_scale u, ev_scale v, ev_scale w, W_ev, A_ev, B_ev]
   grind
 
 private theorem ev_combo' (u v w : Int) (t : K) :
@@ -60,7 +63,7 @@ private theorem ev_combo' (u v w : Int) (t : K) :
         (Poly.add (Poly.scale v (Poly.scale 2 (Poly.mul PP QP))) (Poly.scale w (Poly.sub (Poly.mul QP QP) (Poly.mul PP PP))))) (1 - t) t
       = (u : K) * rw' t + (v : K) * rb t + (w : K) * ra t := by
   rw [ev_add _ _ (by rw [sW, length_add _ _ ((sB v).trans (sA w).symm), sB]),
-    ev_add _ _ ((sB v).trans (sA w).symm), ev_scale, ev_scale, ev_scale, W_ev, A_ev, B_ev]
+    ev_add _ _ ((sB v).trans (sA w).symm), ev_scale u, ev_scale v, ev_scale w, W_ev, A_ev, B_ev]
   grind
 
 private theorem ev_combo'' (u v w : Int) (t : K) :
@@ -68,7 +71,7 @@ private theorem ev_combo'' (u v w : Int) (t : K) :
         (Poly.add (Poly.scale v (Poly.scale 2 (Poly.mul PP QP))) (Poly.scale w (Poly.sub (Poly.mul QP QP) (Poly.mul PP PP))))) (1 - t) t
       = (u : K) * rw' t - (v : K) * rb t - (w : K) * ra t := by
   rw [ev_sub _ _ (by rw [sW, length_add _ _ ((sB v).trans (sA w).symm), sB]),
-    ev_add _ _ ((sB v).trans (sA w).symm), ev_scale, ev_scale, ev_scale, W_ev, A_ev, B_ev]
+    ev_add _ _ ((sB v).trans (sA w).symm), ev_scale u, ev_scale v, ev_scale w, W_ev, A_ev, B_ev]
   grind
 
 /-- Where a turning dancer is, as an exact fraction over the common denominator. -/
@@ -95,6 +98,21 @@ theorem turning_keeps_the_gap (c a b : Pt) (ccw : Bool) {t : K} (h0 : 0 ≤ t) (
   obtain ⟨_, e2, x2, y2⟩ := turn_position c b ccw t
   subst e1; subst e2
   simp only [dist2, x1, y1, x2, y2, gapSq', Int.pow_succ, Int.pow_zero]
+  generalize rw' t = w at *
+  generalize ra t = A at *
+  generalize rb t = B at *
+  cases ccw <;> simp only [if_true, if_false, Bool.false_eq_true] <;>
+    simp only [Ring.intCast_add, Ring.intCast_sub, Ring.intCast_mul, Ring.intCast_one, Semiring.pow_succ, Semiring.pow_zero] <;> grind
+
+/-- **A turning dancer stays on their circle.** Their distance from the centre never changes. -/
+theorem turn_stays_on_circle (c a : Pt) (ccw : Bool) {t : K} (h0 : 0 ≤ t) (h1 : t ≤ 1) :
+    ((rotatePath c a ccw).x t - ((c.x : Int) : K)) ^ 2 + ((rotatePath c a ccw).y t - ((c.y : Int) : K)) ^ 2 = ((gapSq' a c : Int) : K) := by
+  have hw := rW_pos h0 h1
+  have hne : rw' t ≠ 0 := by grind
+  have py := pyth t
+  obtain ⟨_, e1, x1, y1⟩ := turn_position c a ccw t
+  subst e1
+  simp only [x1, y1, gapSq', Int.pow_succ, Int.pow_zero]
   generalize rw' t = w at *
   generalize ra t = A at *
   generalize rb t = B at *
