@@ -1,9 +1,0 @@
-{"plugins": [],
- "package": "choreo",
- "options": {},
- "name": "Choreo.Model",
- "isModule": false,
- "importArts":
- {"Choreo.Poly":
-  [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/lib/lean/Choreo/Poly.olean"]]},
- "dynlibs": []}
