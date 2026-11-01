@@ -1,10 +1,10 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["b0900f9d74a483c5.olean"],
+ {"o": ["0ac7b20002daa351.olean"],
   "m": false,
   "i": "59642033d1a1d776.ilean",
-  "c": "ce5e5edae12c4c5d.c"},
+  "c": "ab09a39acbe39876.c"},
  "log":
  [{"message":
    ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Stress.lean -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Stress.olean -i /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Stress.ilean -c /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Stress.c --setup /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Stress.setup.json --json",
@@ -19,8 +19,8 @@
  [["deps",
    [["choreo/Choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
     ["imports",
-     [["Choreo.Emit transitive imports (legacy)", "117a81a0fcb0c851"],
-      ["Choreo.Emit:importAllArts", "e10818669b3714f8"]]]]],
+     [["Choreo.Emit transitive imports (legacy)", "4a44f38271f18643"],
+      ["Choreo.Emit:importAllArts", "cc84c0d1719c3d88"]]]]],
   ["libs",
    [["import dynlibs", "00000000000006bb"],
     ["package external libraries", "00000000000006bb"],
@@ -35,4 +35,4 @@
   ["Module.name: Choreo.Stress", "953e5e4f6e2630e9"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "d6b1548279e303f9"}
+ "depHash": "4811e267eab20c60"}

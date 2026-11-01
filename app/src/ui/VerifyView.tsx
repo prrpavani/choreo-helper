@@ -26,7 +26,7 @@ const Group = ({ title, sub, items, proofId }: { title: string; sub: string; ite
 export function VerifyView({ program, programReport, report, kernel, transform, onTransform, onGenerate }: { program: ProgramDef | null; programReport: ProgramReport | null | undefined; report: Report; kernel: KernelState; transform: string; onTransform: (k: string) => void; onGenerate: () => void }) {
   const running = kernel.status === 'running', stale = kernel.status === 'not_checked', failed = kernel.status === 'error' || kernel.status === 'timeout'
   const steps = programReport?.steps ?? []
-  const contracts: Obligation[] = steps.filter((s, i) => i === 0 || s.surface !== steps[i - 1].surface || s.opKind === 'checked').map(s => ({ id: `step${s.index}`, name: s.name, text: s.ensures, status: stepStatus(kernel, s), theorem: `step${s.index}_ok`, assumptions: s.requires, extra: s.why ? <p className="c-why"><b>Not met.</b> {s.why}.</p> : null }))
+  const contracts: Obligation[] = steps.filter((s, i) => i === 0 || s.surface !== steps[i - 1].surface || s.opKind === 'exact').map(s => ({ id: `step${s.index}`, name: s.name, text: s.ensures, status: stepStatus(kernel, s), theorem: `step${s.index}_ok`, assumptions: s.requires, extra: s.why ? <p className="c-why"><b>Not met.</b> {s.why}.</p> : null }))
   const brokenSteps = steps.filter(s => linkStatus(kernel, s) === 'broken')
   const comp: Obligation[] = program ? [
     ...brokenSteps.map(s => ({ id: `broken${s.index}`, name: `${s.name} can't follow what comes before it`, text: `${s.why}. This is a broken relationship between two movements. It is not a claim that anyone collides: that is judged separately, below.`, status: 'broken' as Status, theorem: `link${s.index}_broken` })),

@@ -1,18 +1,18 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
- "outputs": "fbfef0510d69bf56.o",
+ "outputs": "365590a76f0441fb.o",
  "log":
  [{"message":
-   ".> /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/clang -c -o /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Scene.c.o.export /Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Scene.c -I /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/include -fstack-clash-protection -ffp-contract=off -fdata-sections -ffunction-sections -fvisibility=hidden -Wno-unused-command-line-argument --sysroot /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0 -nostdinc -isystem /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/include/clang -O3 -DNDEBUG -DLEAN_EXPORTING",
+   ".> /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/clang -c -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Scene.c.o.export /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Scene.c -I /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/include -fstack-clash-protection -ffp-contract=off -fdata-sections -ffunction-sections -fvisibility=hidden -Wno-unused-command-line-argument --sysroot /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0 -nostdinc -isystem /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/include/clang -O3 -DNDEBUG -DLEAN_EXPORTING",
    "level": "trace"}],
  "inputs":
  [["Choreo.Scene:c",
-   [["/Users/rrpavani/Documents/choreo-master/lean/.lake/build/ir/Choreo/Scene.c",
-     "c241b4c89a1fc716"],
+   [["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Scene.c",
+     "06191016b5e9dd00"],
     ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
      "407ce514b71d5a10"]]],
   ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
    "407ce514b71d5a10"],
   ["traceArgs: #[-O3, -DNDEBUG, -DLEAN_EXPORTING]", "c1efb66122fb2b9a"],
   ["arm64-apple-darwin24.6.0", "77c16133d139df5a"]],
- "depHash": "590e6bac87147a43"}
+ "depHash": "e4fe41fb91584bf1"}

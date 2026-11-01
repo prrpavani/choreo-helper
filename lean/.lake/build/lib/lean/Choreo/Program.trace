@@ -1,19 +1,19 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["3552de1efbc99a56.olean"],
+ {"o": ["a8a935a46c528e0e.olean"],
   "m": false,
-  "i": "a0cfe1b4838fcc12.ilean",
-  "c": "0ed6eae82a889453.c"},
+  "i": "1ba8ea2494c7b14b.ilean",
+  "c": "9ef066353e925a21.c"},
  "log":
  [{"message":
    ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Program.lean -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Program.olean -i /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Choreo/Program.ilean -c /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Program.c --setup /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Choreo/Program.setup.json --json",
    "level": "trace"},
   {"message":
-   "Choreo/Program.lean:262:20: Variable name `sp` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _sp\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "Choreo/Program.lean:265:20: Variable name `sp` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _sp\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
    "level": "warning"},
   {"message":
-   "Choreo/Program.lean:271:18: Variable name `sp` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _sp\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "Choreo/Program.lean:274:18: Variable name `sp` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _sp\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
    "level": "warning"}],
  "inputs":
  [["deps",
@@ -33,10 +33,10 @@
   ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
    "407ce514b71d5a10"],
   ["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Choreo/Program.lean",
-   "2e1906817fdd50bd"],
+   "e55f4ffda8af2eae"],
   ["options", "00000000000006bb"],
   ["isModule: false", "feefd2a0d3a1847e"],
   ["Module.name: Choreo.Program", "283a5fc030894acb"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "b03dc7766b1fadf2"}
+ "depHash": "ec708a95500a8906"}

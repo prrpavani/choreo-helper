@@ -113,6 +113,8 @@ for (const t of ['mirror', 'half', 'upstage', 'reverse']) { const { out } = runP
 { const f = structuredClone(programs.find(x => x.id === 'fracture-reunion')); f.sections[1].ops[0].line = 1500
   const { out } = runProgram('wrong line', f); if (!/LINKBROKEN/.test(out) || /COMPOSED/.test(out) || !/VERIFIED/.test(out)) fail('this should be safe, with a broken contract'); ok('Fracture with the line moved: safe, but the contract is rejected. Those are different failures') }
 for (const k of [4, 6, 10, 12, 16]) { const { rep, out } = runProgram(`Parallel Lines, ${k} dancers`, { ...programs[0], n: k }); if (rep.config.n !== k || !/LIBRARY/.test(out)) fail('dancer count was not used'); ok(`Parallel Lines, ${k} dancers: ${/COMPOSED/.test(out) ? 'composes' : 'a contract fails, and Lean says which'}`) }
+{ const x = structuredClone(programs[0]); x.sections[2].ops[0].shape = 'trade'; const { rep, out } = runProgram('trade places', x)
+  const s = rep.program.steps.find(q => q.closest); if (!/WITNESS/.test(out) || !/REFUTED/.test(out) || !s.closest.clash || s.closest.uNum !== 1 || s.closest.uDen !== 2) fail('trading places should be a proved collision at the midpoint'); ok('Two dancers trade places: disproven, with the exact witness at 1/2') }
 const vocabT = fs.readFileSync(path.join(root, 'app/src/lib/program.ts'), 'utf8'), leanFiles = fs.readdirSync(path.join(lean, 'Choreo')).map(f => fs.readFileSync(path.join(lean, 'Choreo', f), 'utf8')).join('\n')
 for (const m of vocabT.matchAll(/theorem: '([\w.]+)'/g)) if (!new RegExp(`theorem ${m[1]}\\b`).test(leanFiles)) fail(`the app names a theorem that does not exist: ${m[1]}`)
 const viewT = fs.readFileSync(path.join(root, 'app/src/ui/VerifyView.tsx'), 'utf8')

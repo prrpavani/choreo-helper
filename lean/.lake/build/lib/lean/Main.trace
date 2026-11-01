@@ -1,10 +1,10 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["3e7efe9e2aee582f.olean"],
+ {"o": ["f1d7d0b144b1559e.olean"],
   "m": false,
   "i": "3ec20082ef734008.ilean",
-  "c": "65215ca228154f50.c"},
+  "c": "ea0fab80367d6214.c"},
  "log":
  [{"message":
    ".> LEAN_PATH=/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/lean /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/Main.lean -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Main.olean -i /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/lib/lean/Main.ilean -c /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Main.c --setup /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Main.setup.json --json",
@@ -13,12 +13,12 @@
  [["deps",
    [["choreo/choreo:extraDep", [["@choreo:extraDep", "00000000000006bb"]]],
     ["imports",
-     [["Choreo.Emit transitive imports (legacy)", "117a81a0fcb0c851"],
-      ["Choreo.Emit:importAllArts", "e10818669b3714f8"],
-      ["Choreo.Scene transitive imports (legacy)", "92f94cfa86bb52b5"],
-      ["Choreo.Scene:importAllArts", "e217dbc56c891a25"],
-      ["Choreo.Stress transitive imports (legacy)", "66128d4ef2e7ec72"],
-      ["Choreo.Stress:importAllArts", "8c2f9ee9352587f5"]]]]],
+     [["Choreo.Emit transitive imports (legacy)", "4a44f38271f18643"],
+      ["Choreo.Emit:importAllArts", "cc84c0d1719c3d88"],
+      ["Choreo.Scene transitive imports (legacy)", "32e98d399fe6e160"],
+      ["Choreo.Scene:importAllArts", "fb4cc92d8d63e45b"],
+      ["Choreo.Stress transitive imports (legacy)", "c0834437fb118b8e"],
+      ["Choreo.Stress:importAllArts", "9a17e450bd3c4def"]]]]],
   ["libs",
    [["import dynlibs", "00000000000006bb"],
     ["package external libraries", "00000000000006bb"],
@@ -33,4 +33,4 @@
   ["Module.name: Main", "f2a1fd945cf30c62"],
   ["Package.id?: (some choreo)", "cd62c0c56c6916d1"],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "36be14c5b2ec38f3"}
+ "depHash": "43a44b23d1dc2863"}

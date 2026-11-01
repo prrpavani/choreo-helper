@@ -1,6 +1,6 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
- "outputs": "d7f94dd699a5ca8b.o",
+ "outputs": "7f4efd6d34e202b0.o",
  "log":
  [{"message":
    ".> /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/bin/clang -c -o /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Main.c.o.export /Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Main.c -I /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/include -fstack-clash-protection -ffp-contract=off -fdata-sections -ffunction-sections -fvisibility=hidden -Wno-unused-command-line-argument --sysroot /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0 -nostdinc -isystem /Users/rrpavani/.elan/toolchains/leanprover--lean4---v4.35.0/include/clang -O3 -DNDEBUG -DLEAN_EXPORTING",
@@ -8,11 +8,11 @@
  "inputs":
  [["Main:c",
    [["/Users/rrpavani/Documents/choreo-master/choreo-helper/lean/.lake/build/ir/Main.c",
-     "65215ca228154f50"],
+     "ea0fab80367d6214"],
     ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
      "407ce514b71d5a10"]]],
   ["Lean 4.35.0, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
    "407ce514b71d5a10"],
   ["traceArgs: #[-O3, -DNDEBUG, -DLEAN_EXPORTING]", "c1efb66122fb2b9a"],
   ["arm64-apple-darwin24.6.0", "77c16133d139df5a"]],
- "depHash": "29c807db4ff7513e"}
+ "depHash": "fc22920af91a08d2"}

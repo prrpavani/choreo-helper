@@ -79,7 +79,7 @@ def staggeredLines (n : Nat) : State :=
   let back := n / 2
   let front := n - back
   -- the rows spread out as far as the stage allows, for any number of dancers
-  let space : Int := min 1800 (10000 / (max 1 (front : Int)))
+  let space : Int := min 1800 (6400 / (max 1 (front : Int)))
   let row (count : Nat) (y shift : Int) : State := (List.range count).map fun (k : Nat) =>
     ⟨(2 * (k : Int) + 1 - (count : Int)) * space / 2 + shift, y⟩
   row front 3000 (-space / 4) ++ row back 5000 (space / 4)
@@ -166,7 +166,10 @@ def compileOp (sp : ProgramSpec) (st : CState) (o : SurfaceOp) : CState :=
   | "move" =>
     let target := match o.places with
       | some p => p
-      | none => assignTo s (namedPlaces o.shape n gap)
+      | none =>
+        -- two dancers trade places: both formations are fine, and the walk between them is not
+        if o.shape == "trade" then s.zipIdx.map fun (p, i) => if i == 0 then s.at 1 else if i == 1 then s.at 0 else p
+        else assignTo s (namedPlaces o.shape n gap)
     let isCircle := o.shape == "circle" || o.shape == "wide circle"
     let r2 := distSq (target.at 0) centre
     let en : Pred := if o.places.isNone && isCircle then .onCircle (List.range n) centre.x centre.y r2 else .isAt target

@@ -277,7 +277,7 @@ def proofSource (b : Built) (program : List CStep := []) (start : State := []) :
     out := out ++ "\n/-- The general results this routine rests on, in force in this very file. -/\ntheorem general_results_in_force : True := by\n  have := @Triple.seq; have := @turning_keeps_the_gap; have := @slide_pair_safe; have := @Algebra.routine_preserves_collision_freedom; exact trivial\n#eval IO.println \"LIBRARY\"\n"
   -- each move, proved on its own
   for ((_, _, tr), k) in (transitionsOf b).zipIdx do
-    if transitionOk r tr then
+    if !b.structural && transitionOk r tr then
       out := out ++ s!"def tr{k} : Transition := {transitionL tr}\n"
       out := out ++ s!"theorem tr{k}_ok {fieldBinders} : TransitionValid K routine tr{k} :=\n  Transition.valid (r := routine) (tr := tr{k}) (by decide +kernel) {chainOf ((List.range tr.count).map (· + tr.first))} K\n"
       out := out ++ s!"#eval IO.println \"TRANSITION {k}\"\n\n"
@@ -499,7 +499,7 @@ def programJson (cfg : Config) (steps : List CStep) (start : State) (names : Nam
           | some (i, j, u, v) =>
             let (A, B, C) := gapQuad (cur.at i) (target.at i) (cur.at j) (target.at j)
             Json.mkObj [("i", i), ("j", j), ("names", toJson s!"{names i} and {names j}"), ("uNum", jInt u.num), ("uDen", toJson u.den), ("A", jInt A), ("B", jInt B), ("C", jInt C),
-              ("distSq", toJson (v.num.toNat / v.den)), ("clash", toJson (v < ((cfg.dmin * cfg.dmin : Int) : Rat)))]
+              ("distSq", toJson (v.num.toNat / v.den)), ("clash", toJson (decide (v < ((cfg.dmin * cfg.dmin : Int) : Rat))))]
           | none => Json.null
         | _ => Json.null),
       ("opKind", toJson (match st.step.op with | .move .. => "exact" | .turn .. => "rule" | .slide .. => "rule" | .par .. => "rule")),
